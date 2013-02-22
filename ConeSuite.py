@@ -79,8 +79,8 @@ class ConeSuite(PyExperimentSuite):
         
         return {'rep':rep,
                 'iter':n,
-                'confusion':confusion.tolist(),
-                'time':time,
+                'confusion':confusion,
+                'time':time.total_seconds(),
                 'classifier':classifier_type,
                 'info': info_func(classifier)}
         
