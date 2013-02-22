@@ -12,12 +12,15 @@ from sklearn.naive_bayes import MultinomialNB
 from sklearn.grid_search import GridSearchCV
 from sklearn.metrics import confusion_matrix, f1_score
 
-from learncone.ConeEstimatorFactorise import ConeEstimatorFactorise
+# from learncone.ConeEstimatorFactorise import ConeEstimatorFactorise
+from learncone.ConeEstimatorGradient import ConeEstimatorGradient
 
 import numpy as np
 
 import hashlib
 import os
+from datetime import datetime
+import logging
 
 class ConeSuite(PyExperimentSuite):
     def reset(self, params, rep):
@@ -49,30 +52,45 @@ class ConeSuite(PyExperimentSuite):
         classifier_type = params['classifier']
         
         classifier = None
+        info_func = lambda x: x.grid_scores_
         if classifier_type == 'svm':
             classifier = GridSearchCV(
                 LinearSVC(),
                 {'C' : [0.0001, 0.001, 0.1, 1, 10, 100, 1000]})
         elif classifier_type == 'nb':
             classifier = MultinomialNB()
+            info_func = lambda x: x.class_log_prior_
         elif classifier_type == 'cone':
             classifier = GridSearchCV(
-                ConeEstimatorFactorise(1),
+                ConeEstimatorGradient(1),
                 {'dimensions' : [2, 3, 4, 5, 10, 15, 20]},
                 score_func = f1_score)
         else:
             raise Exception(
                 "Invalid classifier type: must be 'svm', 'nb' or 'cone'")
 
+        start = datetime.now()
         classifier.fit(self.X_train, self.y_train)    
+        time = datetime.now() - start
         results = classifier.predict(self.X_test)
+        logging.info("Different classification values: %s, %s", set(results), set(self.y_test))
         confusion = confusion_matrix(self.y_test, results)
+
         
-        return {'rep':rep, 'iter':n, 'confusion':confusion}
+        return {'rep':rep,
+                'iter':n,
+                'confusion':confusion.tolist(),
+                'time':time,
+                'classifier':classifier_type,
+                'info': info_func(classifier)}
         
         
 
 if __name__ == '__main__':
+    logging.basicConfig(filename='log/experiments.log',
+                        level=logging.INFO,
+                        format='%(asctime)s %(thread)d %(levelname)s %(message)s')
+
     suite = ConeSuite()
     suite.start()
     
