@@ -200,20 +200,29 @@ class PyExperimentSuite(object):
                 return {}
 
         for line in f:
-            pairs = line.split()
-            for pair in pairs:
-                tag,val = pair.split(':')
+            pairs = json.loads(line)
+            for tag,val in pairs.items():
                 if tags == 'all' or tag in tags:
                     if not tag in results:
-                        try:
-                            results[tag] = [eval(val)]
-                        except (NameError, SyntaxError):
-                            results[tag] = [val]
+                        results[tag] = [val]
                     else:
-                        try:
-                            results[tag].append(eval(val))
-                        except (NameError, SyntaxError):
-                            results[tag].append(val)
+                        results[tag].append(val)
+                
+
+            # pairs = line.split()
+            # for pair in pairs:
+            #     tag,val = pair.split(':')
+            #     if tags == 'all' or tag in tags:
+            #         if not tag in results:
+            #             try:
+            #                 results[tag] = [eval(val)]
+            #             except (NameError, SyntaxError):
+            #                 results[tag] = [val]
+            #         else:
+            #             try:
+            #                 results[tag].append(eval(val))
+            #             except (NameError, SyntaxError):
+            #                 results[tag].append(val)
                             
         f.close()
         if len(results) == 0:

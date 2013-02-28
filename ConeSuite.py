@@ -13,7 +13,7 @@ from sklearn.grid_search import GridSearchCV
 from sklearn.metrics import confusion_matrix, f1_score
 
 # from learncone.ConeEstimatorFactorise import ConeEstimatorFactorise
-from learncone.ConeEstimatorGradient import ConeEstimatorGradient
+from learncone.ConeEstimator import ConeEstimator
 
 import numpy as np
 
@@ -56,14 +56,14 @@ class ConeSuite(PyExperimentSuite):
         if classifier_type == 'svm':
             classifier = GridSearchCV(
                 LinearSVC(),
-                {'C' : [0.0001, 0.001, 0.1, 1, 10, 100, 1000]})
+                {'C' : params['costs']})
         elif classifier_type == 'nb':
             classifier = MultinomialNB()
             info_func = lambda x: x.class_log_prior_
         elif classifier_type == 'cone':
             classifier = GridSearchCV(
-                ConeEstimatorGradient(1),
-                {'dimensions' : [2, 3, 4, 5, 10, 15, 20]},
+                ConeEstimator(1),
+                {'dimensions' : params['dimensions']},
                 score_func = f1_score)
         else:
             raise Exception(
