@@ -463,8 +463,9 @@ class PyExperimentSuite(object):
             if ('experiment' in params and params['experiment'] == 'single'):
                 iparamlist.append(params)
             else:
-                iterparams = [p for p in params if hasattr(params[p], '__iter__')]
+                iterparams = [p for p in params if isinstance(params[p], list)]
                 if len(iterparams) > 0:
+                    print iterparams
                     # write intermediate config file
                     self.mkdir(os.path.join(params['path'], params['name']))
                     self.write_config_file(params, os.path.join(params['path'], params['name']))
@@ -487,6 +488,7 @@ class PyExperimentSuite(object):
                 else:
                     iparamlist.append(params)
 
+        print iparamlist
         return iparamlist
 
     

@@ -8,7 +8,7 @@ import numpy as np
 import sys
 
 def accuracy(confusion):
-    return ((confusion[0][0] + confusion[1][1])/
+    return (np.sum(np.diagonal(confusion))/
             float(np.sum(confusion)))
 
 def evaluate(experiment):
