@@ -10,7 +10,7 @@ from sklearn import utils
 from sklearn.svm import LinearSVC
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.grid_search import GridSearchCV
-from sklearn.metrics import confusion_matrix, f1_score
+from sklearn.metrics import confusion_matrix, f1_score, accuracy_score
 
 # from learncone.ConeEstimatorFactorise import ConeEstimatorFactorise
 from learncone.ConeEstimator import ConeEstimator
@@ -50,6 +50,8 @@ class ConeSuite(PyExperimentSuite):
         assert n == 0
 
         classifier_type = params['classifier']
+        score = {'f1': f1_score, 'accuracy':accuracy_score}[
+            params['score']
         
         classifier = None
         info_func = lambda x: x.grid_scores_
