@@ -8,6 +8,7 @@ import numpy as np
 import sys
 import os
 import math
+import csv
 
 class MissingDataException(Exception):
     pass
@@ -21,7 +22,7 @@ def get_mean_and_error(datasets, function):
     return np.mean(data), np.std(data)/math.sqrt(len(data))
 
 def evaluate(experiment):
-    print experiment
+    #print experiment
     suite = PyExperimentSuite()
     params = suite.get_params(experiment)
     reps = params['repetitions']
@@ -35,22 +36,46 @@ def evaluate(experiment):
         # confusion = results['confusion'][0]
         # print confusion, accuracy(confusion)
 
-    evaluations = {
-        'accuracy' : lambda x: accuracy(x['confusion'][0]),
-        'time' : lambda x: x['time'][0]
-        }
+    evaluations = [
+        ('accuracy', lambda x: accuracy(x['confusion'][0])),
+        ('time', lambda x: x['time'][0])]
 
-    for name, eval_func in evaluations.items():
-        print name, get_mean_and_error(datasets, eval_func)
+    # summary = {}
+    # for name, eval_func in evaluations:
+    #     summary[name] = get_mean_and_error(datasets, eval_func)
+
+    summary = [(name, get_mean_and_error(datasets, eval_func))
+               for name, eval_func in evaluations]
+
+    row = [(x,params[x]) for x in ['dataset','classifier']]
+    for name, (value, error) in summary:
+        row.append( (name,value) )
+        row.append( (name + " error", error) )
+        
+    return row
+
+
+def write_summary(rows):
+    fieldnames = [x[0] for x in rows[0]]
+    output = csv.DictWriter(open('output.csv','w'), fieldnames)
+    output.writeheader()
+    output.writerows([dict(x) for x in rows])
 
 def evaluate_all(path):
+    suite = PyExperimentSuite() 
+    rows = []
     for experiment in os.listdir(path):
         try:
             joined = os.path.join(path,experiment)
             if os.path.isdir(joined):
-                evaluate(joined)
+                params = suite.get_params(joined)
+                row = evaluate(joined)
+                rows.append(row)
         except MissingDataException:
             continue
+
+    write_summary(rows)
+        
 
 if __name__ == "__main__":
     path = sys.argv[1]
