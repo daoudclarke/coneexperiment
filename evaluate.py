@@ -80,7 +80,7 @@ def evaluate_all(path):
         except MissingDataException:
             continue
 
-    write_summary(rows, 'output.csv')
+    write_summary(rows, 'analysis/output.csv')
 
 def evaluate_dimensions(path):
     suite = PyExperimentSuite() 
@@ -106,7 +106,7 @@ def evaluate_dimensions(path):
                 rows = [[('dimensions', x[0]),
                          ('accuracy', x[1][0]),
                          ('error', x[1][1])] for x in means]
-                write_summary(rows, params['dataset'] + '_dims.csv')
+                write_summary(rows, 'analysis/' + params['dataset'] + '_dims.csv')
 
         except MissingDataException:
             continue
