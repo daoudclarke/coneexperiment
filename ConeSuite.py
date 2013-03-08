@@ -9,11 +9,19 @@ from sklearn.cross_validation import KFold
 from sklearn import utils
 from sklearn.svm import LinearSVC
 from sklearn.naive_bayes import MultinomialNB
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.dummy import DummyClassifier
 from sklearn.grid_search import GridSearchCV
-from sklearn.metrics import confusion_matrix, f1_score, accuracy_score
+from sklearn.metrics import confusion_matrix, f1_score
+try:
+    from sklearn.metrics import accuracy_score
+except ImportError:
+    from sklearn.metrics import zero_one_score
+    accuracy_score = zero_one_score
 
 # from learncone.ConeEstimatorFactorise import ConeEstimatorFactorise
 from learncone.ConeEstimator import ConeEstimator
+from learncone.ArtificialData import make_data
 
 import numpy as np
 
@@ -22,9 +30,18 @@ import os
 from datetime import datetime
 import logging
 
+
 class ConeSuite(PyExperimentSuite):
     def reset(self, params, rep):
-        self.dataset = fetch_mldata(params['dataset'])
+        name = params['dataset']
+        if name.startswith('toy'):
+            data_dims, cone_dims = [int(x) for x in
+                                    name.split('-')[1:]]
+            self.dimensions = [cone_dims]
+            self.dataset = make_data(data_dims, cone_dims)
+        else:
+            self.dimensions = params['dimensions']
+            self.dataset = fetch_mldata(name)
 
         # Ensure that the data is always shuffled the same way:
         # seed RNG on data itself
@@ -51,7 +68,7 @@ class ConeSuite(PyExperimentSuite):
 
         classifier_type = params['classifier']
         score = {'f1': f1_score, 'accuracy':accuracy_score}[
-            params['score']
+            params['score']]
         
         classifier = None
         info_func = lambda x: x.grid_scores_
@@ -63,10 +80,20 @@ class ConeSuite(PyExperimentSuite):
             classifier = MultinomialNB()
             info_func = lambda x: x.class_log_prior_
         elif classifier_type == 'cone':
-            classifier = GridSearchCV(
-                ConeEstimator(1),
-                {'dimensions' : params['dimensions']},
-                score_func = f1_score)
+            if len(self.dimensions) > 1:
+                classifier = GridSearchCV(
+                    ConeEstimator(1),
+                    {'dimensions' : self.dimensions},
+                    score_func = f1_score)
+            else:
+                classifier = ConeEstimator(self.dimensions[0])
+                info_func = lambda x: x.get_params()
+        elif classifier_type == 'tree':
+            classifier = DecisionTreeClassifier(random_state=10011)
+            info_func = lambda x: str(x)
+        elif classifier_type == 'stratified':
+            classifier = DummyClassifier()
+            info_func = lambda x: x.get_params()
         else:
             raise Exception(
                 "Invalid classifier type: must be 'svm', 'nb' or 'cone'")

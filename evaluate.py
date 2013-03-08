@@ -57,7 +57,7 @@ def evaluate(experiment):
 
 def write_summary(rows):
     fieldnames = [x[0] for x in rows[0]]
-    output = csv.DictWriter(open('output.csv','w'), fieldnames)
+    output = csv.DictWriter(open('analysis/output.csv','w'), fieldnames)
     output.writeheader()
     output.writerows([dict(x) for x in rows])
 
