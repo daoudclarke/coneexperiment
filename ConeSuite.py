@@ -4,7 +4,7 @@
 
 from expsuite import PyExperimentSuite
 
-from sklearn.datasets import fetch_mldata
+from sklearn.datasets import fetch_mldata, load_svmlight_file
 from sklearn.cross_validation import KFold
 from sklearn import utils
 from sklearn.svm import LinearSVC
@@ -21,6 +21,7 @@ except ImportError:
 
 # from learncone.ConeEstimatorFactorise import ConeEstimatorFactorise
 from learncone.ConeEstimator import ConeEstimator
+from learncone.ConeEstimatorGreedy import ConeEstimatorGreedy
 from learncone.ArtificialData import make_data
 
 import numpy as np
@@ -30,6 +31,10 @@ import os
 from datetime import datetime
 import logging
 
+class SvmlightDataset:
+    def __init__(self, t):    
+        self.data = np.array(t[0].todense())
+        self.target = t[1]
 
 class ConeSuite(PyExperimentSuite):
     def reset(self, params, rep):
@@ -39,6 +44,12 @@ class ConeSuite(PyExperimentSuite):
                                     name.split('-')[1:]]
             self.dimensions = [cone_dims]
             self.dataset = make_data(data_dims, cone_dims)
+        elif name.startswith('wn'):
+            self.dimensions = params['dimensions']
+            self.dataset = SvmlightDataset(
+                load_svmlight_file('../../../Documents/conewordnetdata/' + name + '.mat'))
+            print self.dataset.target.shape
+            print self.dataset.data.shape
         else:
             self.dimensions = params['dimensions']
             self.dataset = fetch_mldata(name)
@@ -87,6 +98,15 @@ class ConeSuite(PyExperimentSuite):
                     score_func = f1_score)
             else:
                 classifier = ConeEstimator(self.dimensions[0])
+                info_func = lambda x: x.get_params()
+        elif classifier_type == 'cone-greedy':
+            if len(self.dimensions) > 1:
+                classifier = GridSearchCV(
+                    ConeEstimatorGreedy(1),
+                    {'dimensions' : self.dimensions},
+                    score_func = f1_score)
+            else:
+                classifier = ConeEstimatorGreedy(self.dimensions[0])
                 info_func = lambda x: x.get_params()
         elif classifier_type == 'tree':
             classifier = DecisionTreeClassifier(random_state=10011)
