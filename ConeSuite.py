@@ -93,24 +93,17 @@ class ConeSuite(PyExperimentSuite):
         elif classifier_type == 'cone':
             if len(self.dimensions) > 1:
                 classifier = GridSearchCV(
-                    ConeEstimator(1),
-                    {'dimensions' : self.dimensions},
+                    ConeEstimator(),
+                    {'dimensions' : self.dimensions,
+                     'noise' : params['noise']},
                     score_func = f1_score)
             else:
                 classifier = ConeEstimator(self.dimensions[0])
                 info_func = lambda x: x.get_params()
-        elif classifier_type == 'cone-greedy':
-            if len(self.dimensions) > 1:
-                classifier = GridSearchCV(
-                    ConeEstimatorGreedy(1),
-                    {'dimensions' : self.dimensions},
-                    score_func = f1_score)
-            else:
-                classifier = ConeEstimatorGreedy(self.dimensions[0])
-                info_func = lambda x: x.get_params()
         elif classifier_type == 'tree':
-            classifier = DecisionTreeClassifier(random_state=10011)
-            info_func = lambda x: str(x)
+            classifier = GridSearchCV(
+                DecisionTreeClassifier(random_state=10011),
+                {'max_depth' : params['depth']})
         elif classifier_type == 'stratified':
             classifier = DummyClassifier()
             info_func = lambda x: x.get_params()
