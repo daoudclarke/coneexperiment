@@ -116,4 +116,4 @@ def evaluate_dimensions(path):
 if __name__ == "__main__":
     path = sys.argv[1]
     evaluate_all(path)
-    evaluate_dimensions(path)
+    #evaluate_dimensions(path)

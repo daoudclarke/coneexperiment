@@ -25,6 +25,7 @@ from learncone.ConeEstimatorGreedy import ConeEstimatorGreedy
 from learncone.ArtificialData import make_data
 
 import numpy as np
+from numpy import random
 
 import hashlib
 import os
@@ -39,6 +40,8 @@ class SvmlightDataset:
 class ConeSuite(PyExperimentSuite):
     def reset(self, params, rep):
         name = params['dataset']
+        print params
+        random.seed(abs(hash(str(params))))
         if name.startswith('toy'):
             data_dims, cone_dims = [int(x) for x in
                                     name.split('-')[1:]]
@@ -131,7 +134,7 @@ class ConeSuite(PyExperimentSuite):
 if __name__ == '__main__':
     logging.basicConfig(filename='log/experiments.log',
                         level=logging.INFO,
-                        format='%(asctime)s %(thread)d %(levelname)s %(message)s')
+                        format='%(asctime)s %(process)d %(levelname)s %(message)s')
 
     suite = ConeSuite()
     suite.start()
