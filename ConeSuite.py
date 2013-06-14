@@ -107,7 +107,8 @@ class ConeSuite(PyExperimentSuite):
         elif classifier_type == 'conesvm':
             classifier = GridSearchCV(
                 ConeEstimatorSVM(),
-                {'beta' : params['beta']},
+                {'beta' : params['beta'],
+                 'C' : params['costs']},
                 score_func = f1_score)
         elif classifier_type == 'tree':
             classifier = GridSearchCV(
