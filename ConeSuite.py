@@ -22,6 +22,7 @@ except ImportError:
 # from learncone.ConeEstimatorFactorise import ConeEstimatorFactorise
 from learncone.ConeEstimator import ConeEstimator
 from learncone.ConeEstimatorGreedy import ConeEstimatorGreedy
+from learncone.ConeEstimatorSVM import ConeEstimatorSVM
 from learncone.ArtificialData import make_data
 
 import numpy as np
@@ -50,7 +51,7 @@ class ConeSuite(PyExperimentSuite):
         elif name.startswith('wn'):
             self.dimensions = params['dimensions']
             self.dataset = SvmlightDataset(
-                load_svmlight_file('../../../Documents/conewordnetdata/' + name + '.mat'))
+                load_svmlight_file('../../../Documents/conewordnetdata/data-nouns-deps-mi/' + name + '.mat'))
             print self.dataset.target.shape
             print self.dataset.data.shape
         else:
@@ -103,6 +104,11 @@ class ConeSuite(PyExperimentSuite):
             else:
                 classifier = ConeEstimator(self.dimensions[0])
                 info_func = lambda x: x.get_params()
+        elif classifier_type == 'conesvm':
+            classifier = GridSearchCV(
+                ConeEstimatorSVM(),
+                {'beta' : params['beta']},
+                score_func = f1_score)
         elif classifier_type == 'tree':
             classifier = GridSearchCV(
                 DecisionTreeClassifier(random_state=10011),
@@ -112,7 +118,7 @@ class ConeSuite(PyExperimentSuite):
             info_func = lambda x: x.get_params()
         else:
             raise Exception(
-                "Invalid classifier type: must be 'svm', 'nb' or 'cone'")
+                "Invalid classifier type: must be 'svm', 'svmcone', 'nb' or 'cone'")
 
         start = datetime.now()
         classifier.fit(self.X_train, self.y_train)    
