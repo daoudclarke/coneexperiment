@@ -1,4 +1,5 @@
 results/
 log/
+analysis/
 *~
 *.pyc

@@ -14,8 +14,43 @@ class MissingDataException(Exception):
     pass
 
 def accuracy(confusion):
+    """
+    >>> accuracy([[1,0],[1,0]])
+    0.5
+    """
     return (np.sum(np.diagonal(confusion))/
             float(np.sum(confusion)))
+
+def precision(confusion):
+    """
+    >>> precision([[5,1],[1,1]])
+    0.5
+    """
+    judged_pos = confusion[0][1] + confusion[1][1]
+    if judged_pos == 0:
+        return 0.0
+    return (confusion[1][1]/
+            float(judged_pos))
+
+def recall(confusion):
+    """
+    >>> recall([[5,1],[1,3]])
+    0.75
+    """
+    pos = confusion[1][0] + confusion[1][1]
+    if pos == 0:
+        return 0.0
+    return (confusion[1][1]/
+            float(pos))
+
+def f1_score(confusion):
+    """
+    >>> f1_score([[1,1],[1,1]])
+    0.5
+    """
+    p = precision(confusion)
+    r = recall(confusion)
+    return 2*p*r/(p + r)
 
 def get_mean_and_error(datasets, function):
     data = [function(x) for x in datasets]
@@ -111,9 +146,18 @@ def evaluate_dimensions(path):
         except MissingDataException:
             continue
 
-    
+
+def _test():
+    import doctest
+    doctest.testmod(verbose=True)
+        
 
 if __name__ == "__main__":
-    path = sys.argv[1]
-    evaluate_all(path)
-    evaluate_dimensions(path)
+    if len(sys.argv) <= 1:
+        _test()
+    else:
+        path = sys.argv[1]
+        evaluate_all(path)
+        evaluate_dimensions(path)
+
+
