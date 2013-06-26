@@ -75,8 +75,11 @@ def collect_results(experiment):
 def evaluate(experiment):
     datasets = collect_results(experiment)
     evaluations = [
-        ('accuracy', lambda x: accuracy(x['confusion'][0])),
-        ('time', lambda x: x['time'][0])]
+        ('Accuracy', lambda x: accuracy(x['confusion'][0])),
+        ('Precision', lambda x: precision(x['confusion'][0])),
+        ('Recall', lambda x: recall(x['confusion'][0])),
+        ('F1', lambda x: f1_score(x['confusion'][0])),
+        ('Time', lambda x: x['time'][0])]
 
     # summary = {}
     # for name, eval_func in evaluations:
