@@ -12,27 +12,16 @@ class EntailmentClassifier:
     def fit(self, pairs):
         """Train classifier based on a sequence of (word1, word2, entail) tuples.
         The value of entail is True if word1 entails word2 or False otherwise."""
-        data, target = self.fit_transform(pairs)
+        data = self.value_map(pairs)
+        target = [p[2] for p in pairs]
         self.classifier.fit(data, target)
 
     def predict(self, pairs):
         "Predict whether entailment holds for a sequence of (word1, word2) tuples."
-        data = self.transform(pairs)
+        data = self.value_map(pairs)
         return self.classifier.predict(data)
 
-    def fit_transform(self, pairs):
-        values = self.value_map(pairs)
-        print values
-        self.vec = DictVectorizer(sparse=False)
-        vectors = self.vec.fit_transform(values)
-        target = [p[2] for p in pairs]
-        return vectors, target
-
-    def transform(self, pairs):
-        values = self.value_map(pairs)
-        print values
-        return self.vec.transform(values)
-
     def value_map(self, pairs):
-        return [{p[0] + '_' + p[1]:1} for p in pairs]
+        return [self.termVectors[p[1]] - self.termVectors[p[0]]
+                for p in pairs]
         

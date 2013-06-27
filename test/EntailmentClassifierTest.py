@@ -24,10 +24,8 @@ class EntailmentClassifierTestCase(unittest.TestCase):
             words = unzipped[0] + unzipped[1] + tuple(test_words)
             word_vectors = [random.random(10) for j in range(6)]
             vectors = {words[j]:word_vectors[j%6] for j in range(len(words))}
-            print vectors
             data = zip(*unzipped)
             test_data = zip(test_words[:3], test_words[3:6], unzipped[2])
-            print data, test_data
             classifier = EntailmentClassifier(neigh, vectors)
 
             # Act
