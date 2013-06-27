@@ -13,19 +13,20 @@ class EntailmentClassifierTestCase(unittest.TestCase):
         random.seed(1001)
 
     def testEntailmentClassifier(self):
-        # Arrange
-        neigh = KNeighborsClassifier(n_neighbors=1)
-        data = [('cat', 'animal', True),
-                ('dog', 'mosquito', False),
-                ('banana', 'fruit', True)]
-        unzipped = zip(*data)
-        words = unzipped[0] + unzipped[1]
-        vectors = {x:random.random(10) for x in words}
-        classifier = EntailmentClassifier(neigh, vectors)
+        for i in range(3):
+            # Arrange
+            neigh = KNeighborsClassifier(n_neighbors=1)
+            unzipped = [('cat','dog', 'banana'),
+                        ('animal', 'mosquito', 'fruit'),
+                        tuple(random.randint(0,2,3) == 0)]
+            data = zip(*unzipped)
+            words = unzipped[0] + unzipped[1]
+            vectors = {x:random.random(10) for x in words}
+            classifier = EntailmentClassifier(neigh, vectors)
 
-        # Act
-        classifier.fit(data)
-        results = classifier.predict(data)
-
-        # Assert
-        self.assertEqual(tuple(results), unzipped[2])
+            # Act
+            classifier.fit(data)
+            results = classifier.predict(data)
+            
+            # Assert
+            self.assertEqual(tuple(results), unzipped[2])
