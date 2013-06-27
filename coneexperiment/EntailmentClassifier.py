@@ -21,13 +21,18 @@ class EntailmentClassifier:
         return self.classifier.predict(data)
 
     def fit_transform(self, pairs):
-        print pairs
-        values = [{'word':p[0] + '_' + p[1]} for p in pairs]
-        self.vec = DictVectorizer()
-        vectors = self.vec.fit_transform(values).toarray()
+        values = self.value_map(pairs)
+        print values
+        self.vec = DictVectorizer(sparse=False)
+        vectors = self.vec.fit_transform(values)
         target = [p[2] for p in pairs]
         return vectors, target
 
     def transform(self, pairs):
-        values = [{'word':p[0] + '_' + p[1]} for p in pairs]
-        return self.vec.transform(values).toarray()
+        values = self.value_map(pairs)
+        print values
+        return self.vec.transform(values)
+
+    def value_map(self, pairs):
+        return [{p[0] + '_' + p[1]:1} for p in pairs]
+        
