@@ -3,6 +3,7 @@ import logging
 import numpy as np
 from numpy import random
 from StringIO import StringIO
+from utils import randomWord
 
 from sklearn.neighbors import KNeighborsClassifier
 
@@ -14,13 +15,17 @@ class VectorMapTestCase(unittest.TestCase):
         random.seed(1001)
 
     def testVectorMap(self):
-        # Arrange
-        data = StringIO(
-            '["consideration/N", {"amod-DEP:await": 5.2, "dobj-HEAD:seek": 0.3}]')
-        vectors = VectorMap(data)
-        
-        # Act
-        value = vectors['consideration']
-        
-        # Assert
-        self.assertTrue((value == np.array([0.3, 5.2])).all())
+        for i in range(3):
+            # Arrange
+            values = random.rand(2)
+            data = '["consideration/N", {"amod-DEP:%s": %f, "dobj-HEAD:%s": %f}]' % (
+                randomWord(), values[0], randomWord(), values[1])
+            vectors = VectorMap()
+            vectors.load(StringIO(data))
+            
+            # Act
+            retrieved = vectors['consideration']
+            
+            # Assert
+            self.assertTrue((abs(values - retrieved) <= 1e-5).all())
+            

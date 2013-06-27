@@ -3,6 +3,7 @@ import logging
 import numpy as np
 from numpy import random
 from string import ascii_lowercase
+from utils import randomWord
 
 from sklearn.neighbors import KNeighborsClassifier
 
@@ -20,7 +21,7 @@ class EntailmentClassifierTestCase(unittest.TestCase):
             unzipped = [('cat','dog', 'banana'),
                         ('animal', 'mosquito', 'fruit'),
                         tuple(random.randint(0,2,3) == 0)]
-            test_words = [self.randomWord() for j in range(6)]
+            test_words = [randomWord() for j in range(6)]
             words = unzipped[0] + unzipped[1] + tuple(test_words)
             word_vectors = [random.random(10) for j in range(6)]
             vectors = {words[j]:word_vectors[j%6] for j in range(len(words))}
@@ -35,6 +36,3 @@ class EntailmentClassifierTestCase(unittest.TestCase):
             # Assert
             self.assertEqual(tuple(results), unzipped[2])
 
-    def randomWord(self):
-        return ''.join([ascii_lowercase[random.randint(len(ascii_lowercase))]
-                        for i in range(5)])
