@@ -5,6 +5,7 @@
 import inspect
 
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.dummy import DummyClassifier
 
 from coneexperiment.EntailmentClassifier import EntailmentClassifier
 
@@ -28,4 +29,8 @@ class ClassifierMaker(object):
     def _make_knn(self):
         neigh = KNeighborsClassifier(n_neighbors=1)
         return EntailmentClassifier(neigh, self.vectors)
+        
+    def _make_most_frequent(self):
+        dummy = DummyClassifier('most_frequent')
+        return EntailmentClassifier(dummy, self.vectors)
         

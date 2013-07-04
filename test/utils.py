@@ -10,13 +10,16 @@ def randomWord():
                     for i in range(5)])
 
 def testData():
-    unzipped = [('cat','dog', 'banana'),
-                ('animal', 'mosquito', 'fruit'),
-                tuple(random.randint(0,2,3) == 0)]
-    test_words = [randomWord() for j in range(6)]
-    words = unzipped[0] + unzipped[1] + tuple(test_words)
-    word_vectors = [random.random(10) for j in range(6)]
-    vectors = {words[j]:word_vectors[j%6] for j in range(len(words))}
+    unzipped = [('cat','dog', 'banana', 'orange', 'butterfly', 'plug'),
+                ('animal', 'mosquito', 'fruit', 'table', 'wing', 'cup'),
+                tuple(random.randint(0,2,6) == 0)]
     data = zip(*unzipped)
-    test_data = zip(test_words[:3], test_words[3:6], unzipped[2])
+
+    test_words = [randomWord() for j in range(12)]
+    test_data = zip(test_words[:6], test_words[6:], unzipped[2])
+
+    words = unzipped[0] + unzipped[1] + tuple(test_words)
+    word_vectors = [random.random(10) for j in range(12)]
+    vectors = {words[j]:word_vectors[j%12] for j in range(len(words))}
+
     return data, test_data, vectors
