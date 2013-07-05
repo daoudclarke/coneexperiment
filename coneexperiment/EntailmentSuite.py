@@ -1,3 +1,4 @@
+#!/usr/bin/python
 # Bismillahi-r-Rahmani-r-Rahim
 
 # Experiment Suite for machine learning with cones
@@ -20,6 +21,7 @@ except ImportError:
 
 from EntailmentExperiment import EntailmentExperiment
 from ClassifierMaker import ClassifierMaker
+from VectorMap import VectorMap
 
 # from learncone.ConeEstimatorFactorise import ConeEstimatorFactorise
 from learncone.ConeEstimator import ConeEstimator
@@ -32,35 +34,50 @@ from numpy import random
 
 import hashlib
 import os
+import sys
 from datetime import datetime
 import logging
+import json
 
 class EntailmentSuite(PyExperimentSuite):
+    def __init__(self, **options):
+        self.additional_options = options
+        super(EntailmentSuite, self).__init__()
+
     def reset(self, params, rep):
-        dataset_path = params['dataset']
         logging.info("Resetting experiment, parameters: %s", str(params))
+        datadir = params['datadir']
+        dataset_path = os.path.join(datadir, params['dataset'] + '.json')
         random.seed(abs(hash(str(params))))
         with open(dataset_path) as dataset_file:
             dataset = json.load(dataset_file)
 
-        maker = ClassifierMaker()
+        vectors_path = os.path.join(datadir, params['vectors'] + '.json')
+        with open(vectors_path) as vectors_file:
+            vectors = VectorMap()
+            vectors.load(vectors_file)
+
+        maker = ClassifierMaker(vectors, params)
         classifier = maker.make(params['classifier'])
 
         num_folds = params['repetitions']
         self.experiment = EntailmentExperiment(dataset, classifier, num_folds)
-        self.experiment.setup()
         
     def iterate(self, params, rep, n):
         assert n == 0
-        confusion, time, info = self.experiment.run(rep)
+        confusion, time, info = self.experiment.runFold(rep)
         
         return {'rep':rep,
                 'iter':n,
                 'confusion':confusion,
                 'time':time.total_seconds(),
-                'classifier':classifier_type,
+                'classifier':params['classifier'],
                 'info': info}
 
+    def parse_opt(self):
+        """ parses the command line options for different settings. """
+        options, args = super(EntailmentSuite, self).parse_opt()
+        self.options.__dict__.update(self.additional_options)
 
 if __name__ == '__main__':
     logging.basicConfig(filename='log/experiments.log',
@@ -68,7 +85,8 @@ if __name__ == '__main__':
                         format='%(asctime)s %(process)d %(levelname)s %(message)s')
     logging.captureWarnings(True)
 
-    suite = ConeSuite()
+    config = sys.argv[1]
+    suite = EntailmentSuite(config=config)
     suite.start()
     
 

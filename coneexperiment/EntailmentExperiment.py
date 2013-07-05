@@ -11,9 +11,8 @@ import hashlib
 
 
 class EntailmentExperiment(object):
-    def __init__(self, dataset, vectors, classifier, num_folds):
+    def __init__(self, dataset, classifier, num_folds):
         self.dataset = dataset
-        self.vectors = vectors
         self.classifier = classifier
         self.num_folds = num_folds
 
@@ -33,4 +32,4 @@ class EntailmentExperiment(object):
         test_target = [x[2] for x in test]
         confusion = confusion_matrix(test_target, results)
         
-        return confusion, 1002.3, 'Dummy test'
+        return confusion, time, 'Dummy test'

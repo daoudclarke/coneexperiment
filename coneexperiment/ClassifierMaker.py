@@ -6,14 +6,19 @@ import inspect
 
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.dummy import DummyClassifier
+from sklearn.grid_search import GridSearchCV
+from sklearn.metrics import confusion_matrix, f1_score
+
+from learncone.ConeEstimatorSVM import ConeEstimatorSVM
 
 from coneexperiment.EntailmentClassifier import EntailmentClassifier
 
 MAKE_PREFIX = '_make_'
 
 class ClassifierMaker(object):
-    def __init__(self, vectors):
+    def __init__(self, vectors, params = {}):
         self.vectors = vectors
+        self.params = params
 
     def make(self, name):
         method = getattr(self, MAKE_PREFIX + name)
@@ -33,4 +38,11 @@ class ClassifierMaker(object):
     def _make_most_frequent(self):
         dummy = DummyClassifier('most_frequent')
         return EntailmentClassifier(dummy, self.vectors)
-        
+
+    def _make_conesvm(self):
+        classifier = GridSearchCV(
+            ConeEstimatorSVM(),
+            {'beta' : self.params['beta'],
+             'C' : self.params['costs']},
+            score_func = f1_score)
+        return EntailmentClassifier(classifier, self.vectors)

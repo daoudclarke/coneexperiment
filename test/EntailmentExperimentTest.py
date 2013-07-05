@@ -35,7 +35,7 @@ class EntailmentExperimentTestCase(unittest.TestCase):
         classifier = maker.make(classifier_name)
 
         num_folds = 3
-        experiment = EntailmentExperiment(all_data, vectors, classifier, num_folds)
+        experiment = EntailmentExperiment(all_data, classifier, num_folds)
         results = [experiment.runFold(fold)
                    for fold in range(num_folds)]
         #print results

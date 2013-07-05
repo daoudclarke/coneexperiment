@@ -17,15 +17,24 @@ class VectorMapTestCase(unittest.TestCase):
     def testVectorMap(self):
         for i in range(3):
             # Arrange
-            values = random.rand(2)
-            data = '["consideration/N", {"amod-DEP:%s": %f, "dobj-HEAD:%s": %f}]' % (
-                randomWord(), values[0], randomWord(), values[1])
+            data = ''
+            all_values = []
+            for word in ['consideration', 'banana']:
+                values = random.rand(2)
+                data += '["%s/N", {"amod-DEP:look": %f, "dobj-HEAD:like": %f}]\n' % (
+                    word, values[0], values[1])
+                all_values.append(values)
+
             vectors = VectorMap()
             vectors.load(StringIO(data))
             
             # Act
-            retrieved = vectors['consideration']
-            
+            consideration = vectors['consideration']
+            banana = vectors['banana']
+            nonexistent = vectors['nonexistent']
+
             # Assert
-            self.assertTrue((abs(values - retrieved) <= 1e-5).all())
+            self.assertTrue(abs(np.dot(all_values[0], all_values[1]) -
+                                np.dot(consideration, banana)) <= 1e-5)
+            self.assertTrue(abs(np.dot(consideration, nonexistent)) <= 1e-5)
             
