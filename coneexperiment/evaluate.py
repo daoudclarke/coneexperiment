@@ -117,8 +117,7 @@ def evaluate_all(path):
                 rows.append(row)
         except MissingDataException:
             continue
-
-    write_summary(rows, 'analysis/output.csv')
+    return rows
 
 def evaluate_dimensions(path):
     suite = PyExperimentSuite() 
@@ -160,7 +159,8 @@ if __name__ == "__main__":
         _test()
     else:
         path = sys.argv[1]
-        evaluate_all(path)
+        rows = evaluate_all(path)
+        write_summary(rows, 'analysis/output.csv')
         evaluate_dimensions(path)
 
 

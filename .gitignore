@@ -4,5 +4,6 @@ results/
 log/
 analysis/
 build/
+test_data/entailment-test/
 *~
 *.pyc
