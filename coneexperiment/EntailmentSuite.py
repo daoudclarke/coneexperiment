@@ -29,6 +29,8 @@ from learncone.ConeEstimatorGreedy import ConeEstimatorGreedy
 from learncone.ConeEstimatorSVM import ConeEstimatorSVM
 from learncone.ArtificialData import make_data
 
+import evaluate
+
 import numpy as np
 from numpy import random
 
@@ -79,6 +81,20 @@ class EntailmentSuite(PyExperimentSuite):
         options, args = super(EntailmentSuite, self).parse_opt()
         self.options.__dict__.update(self.additional_options)
 
+def run_and_evaluate(**suite_params):
+    suite = EntailmentSuite(**suite_params)
+    suite.start()
+
+    experiments = suite.cfgparser.sections()
+    for experiment in experiments:
+        experiment_path = os.path.join(os.path.dirname(suite.options.config),
+                                       experiment)
+        params = suite.get_params(experiment_path)
+        path = os.path.join(params['path'],
+                            params['name'])
+        rows = evaluate.evaluate_all(path)
+        evaluate.write_summary(rows, os.path.join(path, 'analysis.csv'))
+
 if __name__ == '__main__':
     logging.basicConfig(filename='log/experiments.log',
                         level=logging.INFO,
@@ -86,7 +102,11 @@ if __name__ == '__main__':
     logging.captureWarnings(True)
 
     config = sys.argv[1]
-    suite = EntailmentSuite(config=config)
-    suite.start()
+    run_and_evaluate(config=config, ncores=1)
+    
+    
+    # import cProfile
+    # cProfile.run('suite.start()')
+    
     
 

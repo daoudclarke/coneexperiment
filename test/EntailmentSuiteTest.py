@@ -8,29 +8,32 @@ from numpy import random
 from StringIO import StringIO
 from utils import testData
 
-from coneexperiment.EntailmentSuite import EntailmentSuite
+from coneexperiment.EntailmentSuite import run_and_evaluate
 from coneexperiment import evaluate
 import os
+import csv
 
 class EntailmentSuiteTestCase(unittest.TestCase):
     config_path = 'test_data'
     config_name = 'entailment.cfg'
+    csv_path = 'test_data/entailment-test/analysis.csv'
     
     def setUp(self):
         random.seed(1001)
 
-    def testEntailmentSuite(self):
+    def test_run_and_evaluate(self):
         " Functional test of the entailment experiment suite"
         full_path = os.path.join(self.config_path, self.config_name)
-        suite = EntailmentSuite(config=full_path,
-                                ncores=1)
-        suite.start()
+        run_and_evaluate(config=full_path,
+                         ncores=1)
+        csv_reader = csv.DictReader(open(self.csv_path))
+        rows = [row for row in csv_reader]
+        self.assertEqual(1, len(rows))        
 
         
-        experiments = suite.cfgparser.sections()
-        params = suite.get_params(os.path.join(self.config_path, experiments[0]))
-        path = os.path.join(params['path'],
-                            params['name'])
-        rows = evaluate.evaluate_all(path)
+        # experiments = suite.cfgparser.sections()
+        # params = suite.get_params(os.path.join(self.config_path, experiments[0]))
+        # path = os.path.join(params['path'],
+        #                     params['name'])
+        # rows = evaluate.evaluate_all(path)
         
-        self.assertEqual(1, len(rows))
