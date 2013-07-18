@@ -11,6 +11,9 @@ import math
 import csv
 from confusionmetrics.metrics import precision, recall, f1_score, accuracy
 
+class MissingDataException(Exception):
+    pass
+
 def get_mean_and_error(datasets, function):
     data = [function(x) for x in datasets]
     return np.mean(data), np.std(data)/math.sqrt(len(data))
