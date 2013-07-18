@@ -19,7 +19,8 @@ def testData():
     test_data = zip(test_words[:6], test_words[6:], unzipped[2])
 
     words = unzipped[0] + unzipped[1] + tuple(test_words)
-    word_vectors = [random.random(10) for j in range(12)]
+    word_vectors = [{randomWord():random.randint(100) for i in range(10)}
+                    for j in range(len(test_words))]
     vectors = {words[j]:word_vectors[j%12] for j in range(len(words))}
 
     return data, test_data, vectors
