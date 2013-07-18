@@ -7,6 +7,7 @@ import sys
 import numpy as np
 import os
 import json
+import logging
 
 #sys.setdefaultencoding('utf_8')
 
@@ -23,15 +24,8 @@ def create_db(file_path):
                 )
                 """)
             for term, vector in dependencies(data):
-                try:
-                    # values = [unicode(term).encode('utf-8'),
-                    #           unicode(json.dumps(vector)).encode('utf-8')]
-                    values = [str.decode(term, 'utf-8'),
-                              json.dumps(vector)]
-                except UnicodeDecodeError as e:
-                    print unicode.decode(unicode(term), 'utf-8')
-                    print "Exception for term", term, vector
-                    raise
+                values = [str.decode(term, 'utf-8'),
+                          json.dumps(vector)]
 
                 cursor.execute("""
                   INSERT INTO termvector (term, vector)
@@ -74,8 +68,10 @@ class TermDB(object):
             try:
                 vector = json.loads(
                     [x for x in cursor][0][0])
+                logging.debug('DB getitem: accessed term %s from DB', key)
                 return vector
             except IndexError:
+                logging.debug('DB getitem: term %s missing in DB', key)
                 return {}
 
 if __name__ == "__main__":
