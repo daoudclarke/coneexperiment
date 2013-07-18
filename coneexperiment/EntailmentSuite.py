@@ -44,6 +44,7 @@ import json
 class EntailmentSuite(PyExperimentSuite):
     def __init__(self, **options):
         self.additional_options = options
+        logging.info("Additional options: %s", str(options))
         super(EntailmentSuite, self).__init__()
 
     def reset(self, params, rep):
@@ -55,6 +56,7 @@ class EntailmentSuite(PyExperimentSuite):
             dataset = json.load(dataset_file)
 
         vectors_path = os.path.join(datadir, params['vectors'] + '.json')
+        print "Opening vectors..."
         with open(vectors_path) as vectors_file:
             vectors = VectorMap()
             vectors.load(vectors_file)
@@ -66,6 +68,7 @@ class EntailmentSuite(PyExperimentSuite):
         self.experiment = EntailmentExperiment(dataset, classifier, num_folds)
         
     def iterate(self, params, rep, n):
+        logging.info("Beggining iteration %d, repetition %d", n, rep)
         assert n == 0
         confusion, time, info = self.experiment.runFold(rep)
         

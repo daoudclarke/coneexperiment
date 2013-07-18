@@ -7,11 +7,13 @@ import numpy as np
 from numpy import random
 from StringIO import StringIO
 from utils import testData
+import shutil
 
 from coneexperiment.EntailmentSuite import run_and_evaluate
 from coneexperiment import evaluate
 import os
 import csv
+import logging
 
 class EntailmentSuiteTestCase(unittest.TestCase):
     config_path = 'test_data'
@@ -19,6 +21,13 @@ class EntailmentSuiteTestCase(unittest.TestCase):
     csv_path = 'test_data/entailment-test/analysis.csv'
     
     def setUp(self):
+        logging.basicConfig(filename='log/unittest.log',
+                            level=logging.INFO,
+                            format='%(asctime)s %(process)d %(levelname)s %(message)s')
+        try:
+            shutil.rmtree('test_data/unittest')
+        except OSError as e:
+            print "Warning: ", e
         random.seed(1001)
 
     def test_run_and_evaluate(self):
