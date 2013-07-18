@@ -90,8 +90,9 @@ def run_and_evaluate(**suite_params):
 
     experiments = suite.cfgparser.sections()
     for experiment in experiments:
-        experiment_path = os.path.join(os.path.dirname(suite.options.config),
+        experiment_path = os.path.join(eval(suite.cfgparser.get('DEFAULT', 'path')),
                                        experiment)
+        print experiment_path
         params = suite.get_params(experiment_path)
         path = os.path.join(params['path'],
                             params['name'])
