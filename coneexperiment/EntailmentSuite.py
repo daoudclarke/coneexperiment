@@ -21,7 +21,8 @@ except ImportError:
 
 from EntailmentExperiment import EntailmentExperiment
 from ClassifierMaker import ClassifierMaker
-from VectorMap import VectorMap
+#from VectorMap import VectorMap
+from TermDB import TermDB
 
 # from learncone.ConeEstimatorFactorise import ConeEstimatorFactorise
 from learncone.ConeEstimator import ConeEstimator
@@ -55,10 +56,9 @@ class EntailmentSuite(PyExperimentSuite):
         with open(dataset_path) as dataset_file:
             dataset = json.load(dataset_file)
 
-        vectors_path = os.path.join(datadir, params['vectors'] + '.json')
-        with open(vectors_path) as vectors_file:
-            vectors = VectorMap()
-            vectors.load(vectors_file)
+        vectors_path = os.path.join(datadir, params['vectors'])
+        print "DB path: ", vectors_path
+        vectors = TermDB(vectors_path)
 
         maker = ClassifierMaker(vectors, params)
         classifier = maker.make(params['classifier'])
