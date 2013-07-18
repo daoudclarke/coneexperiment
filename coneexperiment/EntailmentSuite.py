@@ -56,7 +56,6 @@ class EntailmentSuite(PyExperimentSuite):
             dataset = json.load(dataset_file)
 
         vectors_path = os.path.join(datadir, params['vectors'] + '.json')
-        print "Opening vectors..."
         with open(vectors_path) as vectors_file:
             vectors = VectorMap()
             vectors.load(vectors_file)
@@ -90,9 +89,9 @@ def run_and_evaluate(**suite_params):
 
     experiments = suite.cfgparser.sections()
     for experiment in experiments:
+        logging.info("Running experiment: %s", experiment)
         experiment_path = os.path.join(eval(suite.cfgparser.get('DEFAULT', 'path')),
                                        experiment)
-        print experiment_path
         params = suite.get_params(experiment_path)
         path = os.path.join(params['path'],
                             params['name'])
@@ -106,7 +105,7 @@ if __name__ == '__main__':
     logging.captureWarnings(True)
 
     config = sys.argv[1]
-    run_and_evaluate(config=config, ncores=1)
+    run_and_evaluate(config=config)
     
     
     # import cProfile
