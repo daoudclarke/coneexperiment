@@ -16,10 +16,10 @@ class TermDBTestCase(unittest.TestCase):
 
     def testTermDBTermExists(self):
         term_db = TermDB('test_data/nouns-deps-head.mi.db')
-        consideration = term_db['consideration/N']
+        consideration = term_db.nouns['consideration']
         self.assertTrue(type(consideration) == dict)
 
     def testTermDBTermNotExists(self):
         term_db = TermDB('test_data/nouns-deps-head.mi.db')
-        consideration = term_db['termthatdoesntexist/N']
+        consideration = term_db.nouns['termthatdoesntexist']
         self.assertTrue(type(consideration) == dict)

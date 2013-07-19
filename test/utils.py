@@ -5,6 +5,10 @@
 from numpy import random
 from string import ascii_lowercase
 
+class TestTermDb(object):
+    def __init__(self, nouns):
+        self.nouns = nouns
+
 def randomWord():
     return ''.join([ascii_lowercase[random.randint(len(ascii_lowercase))]
                     for i in range(5)])
@@ -23,4 +27,4 @@ def testData():
                     for j in range(len(test_words))]
     vectors = {words[j]:word_vectors[j%12] for j in range(len(words))}
 
-    return data, test_data, vectors
+    return data, test_data, TestTermDb(vectors)

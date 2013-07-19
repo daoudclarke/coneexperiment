@@ -100,7 +100,7 @@ def run_and_evaluate(**suite_params):
 
 if __name__ == '__main__':
     logging.basicConfig(filename='log/experiments.log',
-                        level=logging.INFO,
+                        level=logging.DEBUG,
                         format='%(asctime)s %(process)d %(levelname)s %(message)s')
     logging.captureWarnings(True)
 

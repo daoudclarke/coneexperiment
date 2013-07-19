@@ -8,8 +8,8 @@ from scipy import sparse
 import numpy as np
 
 class EntailmentClassifier:
-    def __init__(self, classifier, termVectors):
-        self.termVectors = termVectors
+    def __init__(self, classifier, termDb):
+        self.termDb = termDb
         self.classifier = classifier
         self.vectorizer = None
 
@@ -31,7 +31,7 @@ class EntailmentClassifier:
     def value_map(self, pairs):
         terms = list(set(x[0] for x in pairs) |
                      set(x[1] for x in pairs))
-        term_dicts = (self.termVectors[x] for x in terms)
+        term_dicts = (self.termDb.nouns[x] for x in terms)
 
         if self.vectorizer:
             term_vectors = self.vectorizer.transform(term_dicts)
