@@ -2,6 +2,8 @@
 #
 # Classifier that operates on pairs of terms
 
+import logging
+
 from sklearn.feature_extraction import DictVectorizer
 from scipy import sparse
 
@@ -30,6 +32,8 @@ class EntailmentClassifier:
         #assert sparse.issparse(data)
         #data = np.atleast2d_or_csr(data, dtype=np.float64, order="C")
         target = np.array([p[2] for p in pairs], dtype=int)
+        assert data.shape[0] == target.shape[0]
+        logging.info("Number of samples: %d", data.shape[0])
         self.classifier.fit(data, target)
 
     def predict(self, pairs):
@@ -51,6 +55,6 @@ class EntailmentClassifier:
             term_vectors = self.vectorizer.fit_transform(term_dicts)
         term_map = {terms[i]:term_vectors[i] for i in range(len(terms))}
         self.memory_usage("Memory usage after vectorizer():")
-        return np.array([np.array((term_map[p[1]] - term_map[p[0]]).todense())[0]
-                         for p in pairs])
+        return sparse.vstack(term_map[p[1]] - term_map[p[0]]
+                             for p in pairs)
         
