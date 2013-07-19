@@ -15,11 +15,11 @@ class TermDBTestCase(unittest.TestCase):
         random.seed(1001)
 
     def testTermDBTermExists(self):
-        term_db = TermDB('test_data/nouns-deps-head.mi.db')
+        term_db = TermDB('test_data/nouns-deps-small-head.mi.db')
         consideration = term_db.nouns['consideration']
         self.assertTrue(type(consideration) == dict)
 
     def testTermDBTermNotExists(self):
-        term_db = TermDB('test_data/nouns-deps-head.mi.db')
+        term_db = TermDB('test_data/nouns-deps-small-head.mi.db')
         consideration = term_db.nouns['termthatdoesntexist']
         self.assertTrue(type(consideration) == dict)

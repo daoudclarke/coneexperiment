@@ -3,11 +3,12 @@ import logging
 import numpy as np
 from numpy import random
 from string import ascii_lowercase
-from utils import testData
+from collections import defaultdict
 
 from sklearn.neighbors import KNeighborsClassifier
 
 from coneexperiment.EntailmentClassifier import EntailmentClassifier        
+from utils import testData
 
 class EntailmentClassifierTestCase(unittest.TestCase):
     def setUp(self):
@@ -30,4 +31,16 @@ class EntailmentClassifierTestCase(unittest.TestCase):
             
             # Assert
             self.assertEqual(tuple(results), expected)
+
+    @unittest.skip("This test fails because of a bug in numpy")
+    def testEntailmentClassifierEmptyData(self):
+        # Arrange
+        data, test_data, vectors = testData()
+        vectors.nouns = defaultdict(lambda:{})
+        neigh = KNeighborsClassifier(n_neighbors=1)
+        classifier = EntailmentClassifier(neigh, vectors)
+
+        # Act
+        classifier.fit(data)
+        classifier.predict(data)
 
