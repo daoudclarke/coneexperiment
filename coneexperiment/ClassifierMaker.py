@@ -12,6 +12,8 @@ from sklearn.metrics import confusion_matrix, f1_score
 from learncone.ConeEstimatorSVM import ConeEstimatorSVM
 
 from coneexperiment.EntailmentClassifier import EntailmentClassifier
+from baseline.baselineClassifier import BaselineEntailmentClassifier
+from baseline.baselineClassifier import WidthClassifier
 
 MAKE_PREFIX = '_make_'
 
@@ -46,3 +48,7 @@ class ClassifierMaker(object):
              'C' : self.params['costs']},
             score_func = f1_score)
         return EntailmentClassifier(classifier, self.vectors)
+
+    def _make_widthdiff(self):
+        classifier = WidthClassifier('widthdiff')
+        return BaselineEntailmentClassifier(classifier, self.vectors)
