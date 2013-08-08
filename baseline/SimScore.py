@@ -37,7 +37,7 @@ def compute_lin(pair,term_map):
     num=0
     indices = avector.multiply(bvector).nonzero() #only consider elements in intersection
     for i in indices[1]:
-        num += min(avector[0,i],bvector[0,i])
+        num += avector[0,i]+bvector[0,i]
 
 
     den=(avector+bvector).sum()
