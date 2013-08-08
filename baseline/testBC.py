@@ -4,6 +4,7 @@ from coneexperiment.EntailmentClassifier import EntailmentClassifier
 from coneexperiment.ClassifierMaker import ClassifierMaker
 from coneexperiment.TermDB import TermDB
 import json,os,random
+import numpy as np
 
 
 
@@ -31,5 +32,12 @@ if __name__ == "__main__":
     maker = ClassifierMaker(vectors, params)
     classifier = maker.make(params['classifier'])
 
-    classifier.predict(dataset)
+
+    target = np.array([p[2] for p in dataset], dtype=int)
+    classifier.fit(dataset)
+    predictions=classifier.predict(dataset)
+    print "Predictions:", predictions
+    print "Actual:", target
+
+
 
