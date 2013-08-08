@@ -1,7 +1,7 @@
 __author__ = 'juliewe'
 
+from baseline import Separator,SimScore
 from sklearn.feature_extraction import DictVectorizer
-from scipy import sparse
 
 from coneexperiment.EntailmentClassifier import EntailmentClassifier
 import logging
@@ -12,31 +12,95 @@ class WidthClassifier:
 
     def __init__(self,name):
         self.name=name
+        self.widthparameter=0
 
 
-    def fit(self,data,target):
-        print "Baseline fit: Ignoring training data as unsupervised classifier: "+self.name
+    def fit(self,pairs, data,target):
+        logging.info("Baseline fit: Ignoring training data as unsupervised classifier: "+self.name)
 
 
-    def predict(self,data):
-        #data is a pair of vstacks (sparse arrays) of term_map for p[0],p[1] for p in pairs
-        print "Baseline prediction: "+self.name
-        (entailer,entailed)=data
-        #print entailer.shape,entailed.shape, entailer.shape[0]
-        assert entailer.shape[0] == entailed.shape[0]
-        #print "entailer", entailer.getrow(1).getnnz()  #this is non-zero features in sparse array
-        #print "entailed", entailed.getrow(1).getnnz()
+    def predict(self,pairs, term_map):
+        #term_map is dictionary from terms (in pairs) to vectors
+        #print "Baseline prediction: "+self.name
+        #print "Generating width_map from "+str(len(term_map.keys()))+" keys"
+        width_map={}
+        #done=0
+        for term in term_map.keys():
+            width_map[term]=term_map[term].getnnz()
+        #    done+=1
+        #    if done%500==0:print "Processed "+str(done)+" terms"
+
+        #print "Test: event = ",width_map["event"]
+
         tags=[]
-
-        print "Number of samples is : "+str(entailer.shape[0])
-        for i in range(entailer.shape[0]):
-            wd = entailed.getrow(i).getnnz()-entailer.getrow(i).getnnz()
-            if wd>0:
+        for p in pairs:
+            wd = width_map[p[1]]-width_map[p[0]]
+            if wd > self.widthparameter:
                 tags.append(1)
             else:
                 tags.append(0)
-            if i%10==0: print "Tested: "+str(i)
-        return tags
+
+        return np.array(tags,dtype=int)
+
+class WidthClassifierP(WidthClassifier):
+
+    def fit(self,pairs,term_map,target):
+
+ #       print "Baseline: setting parameter for "+self.name
+
+        width_map={}
+
+        for term in term_map.keys():
+            width_map[term]=term_map[term].getnnz()
+
+
+        ones=[]
+        zeros=[]
+        for pair,target in zip(pairs,target):
+            wd = width_map[pair[1]]-width_map[pair[0]]
+            if target==1:
+                ones.append(wd)
+            else:
+                zeros.append(wd)
+#        print len(ones), len(zeros)
+
+        self.widthparameter=float(Separator.separate(ones,zeros))
+        print "Baseline: "+self.name+", Parameter set as "+str(self.widthparameter)
+
+class ClassifierP():
+    def __init__(self,name):
+        self.name=name
+        self.param=0
+
+
+    def fit(self,pairs,term_map,target):
+        ones=[]
+        zeros=[]
+        for pair,target in zip(pairs,target):
+            score = SimScore.compute_score(pair,term_map,self.name)
+            if target==1:
+                ones.append(score)
+            else:
+                zeros.append(score)
+        self.param=float(Separator.separate(ones,zeros,integer=False))
+        logging.info("Baseline: "+self.name+", Parameter set as "+str(self.param))
+
+    def predict(self,pairs,term_map):
+        #term_map is dictionary from terms (in pairs) to vectors
+        #print "Baseline prediction: "+self.name
+        #print "Generating width_map from "+str(len(term_map.keys()))+" keys"
+
+
+        tags=[]
+        for pair in pairs:
+            wd = SimScore.compute_score(pair,term_map,self.name)
+            if wd > self.param:
+                tags.append(1)
+            else:
+                tags.append(0)
+
+        return np.array(tags,dtype=int)
+
 
 class BaselineEntailmentClassifier(EntailmentClassifier):
 
@@ -46,9 +110,14 @@ class BaselineEntailmentClassifier(EntailmentClassifier):
         data = self.value_map(pairs)
 
         target = np.array([p[2] for p in pairs], dtype=int)
-        assert data[0].shape[0] == target.shape[0]
-        logging.info("Number of samples: %d", data[0].shape[0])
-        self.classifier.fit(data, target)
+        logging.info("Number of samples: %d", target.shape[0])
+        self.classifier.fit(pairs,data, target)
+
+    def predict(self, pairs):
+        "Predict whether entailment holds for a sequence of (word1, word2) tuples."
+        data = self.value_map(pairs)
+        self.memory_usage("Memory usage before predict():")
+        return self.classifier.predict(pairs,data)
 
     def value_map(self, pairs):
         terms = list(set(x[0] for x in pairs) |
@@ -72,5 +141,5 @@ class BaselineEntailmentClassifier(EntailmentClassifier):
        # print p[0],term_map[p[0]].getnnz() #this has all features (other than FILTERED) included in count - essentially counts keys
        # print p[1],term_map[p[1]].getnnz()
 
-        return (sparse.vstack(term_map[p[0]] for p in pairs),sparse.vstack(term_map[p[1]] for p in pairs))
+        return term_map
 

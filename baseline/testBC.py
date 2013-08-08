@@ -1,6 +1,5 @@
 __author__ = 'juliewe'
 
-from coneexperiment.EntailmentClassifier import EntailmentClassifier
 from coneexperiment.ClassifierMaker import ClassifierMaker
 from coneexperiment.TermDB import TermDB
 import json,os,random
@@ -13,8 +12,8 @@ params={}
 params['datadir'] = '/Volumes/LocalScratchHD/juliewe/Documents/workspace/coneexperiment/data/'
 params['dataset'] = 'wn-noun-dependencies-original'
 params['vectors'] =  'nouns-deps.mi.db'
-params['classifier'] = 'widthdiff'
-
+#params['classifier'] = 'widthdiff'
+params['classifier']='lin'
 
 if __name__ == "__main__":
     print "Testing baseline function"
