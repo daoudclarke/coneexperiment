@@ -1,14 +1,15 @@
 __author__ = 'juliewe'
 
-from baseline import Separator,SimScore
+from baseline import Separator
 from sklearn.feature_extraction import DictVectorizer
+from SimScore import SimCalculator
 
 from coneexperiment.EntailmentClassifier import EntailmentClassifier
 import logging
 import numpy as np
 
 
-class WidthClassifier:
+class WidthClassifierUP:
 
     def __init__(self,name):
         self.name=name
@@ -42,7 +43,7 @@ class WidthClassifier:
 
         return np.array(tags,dtype=int)
 
-class WidthClassifierP(WidthClassifier):
+class WidthClassifierP(WidthClassifierUP):
 
     def fit(self,pairs,term_map,target):
 
@@ -67,23 +68,18 @@ class WidthClassifierP(WidthClassifier):
         self.widthparameter=float(Separator.separate(ones,zeros))
         print "Baseline: "+self.name+", Parameter set as "+str(self.widthparameter)
 
-class ClassifierP():
+class ClassifierUP():
     def __init__(self,name):
-        self.name=name
+        self.metric=name
+        self.make_name()
         self.param=0
+        self.simCalc=SimCalculator()
 
+    def make_name(self):
+        self.name=self.metric+"_UP"
 
     def fit(self,pairs,term_map,target):
-        ones=[]
-        zeros=[]
-        for pair,target in zip(pairs,target):
-            score = SimScore.compute_score(pair,term_map,self.name)
-            if target==1:
-                ones.append(score)
-            else:
-                zeros.append(score)
-        self.param=float(Separator.separate(ones,zeros,integer=False))
-        logging.info("Baseline: "+self.name+", Parameter set as "+str(self.param))
+        logging.info("Baseline fit: Ignoring training data as unsupervised classifier: "+self.name)
 
     def predict(self,pairs,term_map):
         #term_map is dictionary from terms (in pairs) to vectors
@@ -93,13 +89,32 @@ class ClassifierP():
 
         tags=[]
         for pair in pairs:
-            wd = SimScore.compute_score(pair,term_map,self.name)
+            wd = self.simCalc.compute_score(pair,term_map,self.metric)
             if wd > self.param:
                 tags.append(1)
             else:
                 tags.append(0)
 
         return np.array(tags,dtype=int)
+
+class ClassifierP(ClassifierUP):
+
+    def make_name(self):
+        self.name=self.metric+"_P"
+
+    def fit(self,pairs,term_map,target):
+        ones=[]
+        zeros=[]
+        for pair,target in zip(pairs,target):
+            score = self.simCalc.compute_score(pair,term_map,self.metric)
+            if target==1:
+                ones.append(score)
+            else:
+                zeros.append(score)
+        self.param=float(Separator.separate(ones,zeros,integer=False))
+        logging.info("Baseline: "+self.name+", Parameter set as "+str(self.param))
+
+
 
 
 class BaselineEntailmentClassifier(EntailmentClassifier):

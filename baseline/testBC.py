@@ -13,7 +13,7 @@ params['datadir'] = '/Volumes/LocalScratchHD/juliewe/Documents/workspace/coneexp
 params['dataset'] = 'wn-noun-dependencies-original'
 params['vectors'] =  'nouns-deps.mi.db'
 #params['classifier'] = 'widthdiff'
-params['classifier']='lin'
+params['classifier']='invCLP'
 
 if __name__ == "__main__":
     print "Testing baseline function"

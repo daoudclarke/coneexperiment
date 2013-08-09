@@ -13,7 +13,7 @@ from learncone.ConeEstimatorSVM import ConeEstimatorSVM
 
 from coneexperiment.EntailmentClassifier import EntailmentClassifier
 from baseline.baselineClassifier import BaselineEntailmentClassifier
-from baseline.baselineClassifier import WidthClassifier, WidthClassifierP,ClassifierP
+from baseline.baselineClassifier import WidthClassifierUP, WidthClassifierP,ClassifierP,ClassifierUP
 
 MAKE_PREFIX = '_make_'
 
@@ -50,17 +50,37 @@ class ClassifierMaker(object):
         return EntailmentClassifier(classifier, self.vectors)
 
     def _make_widthdiff(self):
-        classifier = WidthClassifier('widthdiff')
+        classifier = WidthClassifierUP('widthdiff')
         return BaselineEntailmentClassifier(classifier, self.vectors)
 
-    def _make_widthP(self):
-        classifier = WidthClassifierP('widthP')
+    def _make_widthdiffP(self):
+        classifier = WidthClassifierP('widthdiffP')
         return BaselineEntailmentClassifier(classifier,self.vectors)
 
-    def _make_cosine(self):
+    def _make_cosineP(self):
         classifier = ClassifierP('cosine')
         return BaselineEntailmentClassifier(classifier,self.vectors)
 
-    def _make_lin(self):
+    def _make_linP(self):
         classifier = ClassifierP('lin')
+        return BaselineEntailmentClassifier(classifier,self.vectors)
+
+    def _make_CRdiffP(self):
+        classifier = ClassifierP('CRdiff')
+        return BaselineEntailmentClassifier(classifier,self.vectors)
+
+    def _make_clarkediffP(self):
+        classifier = ClassifierP('clarkediff')
+        return BaselineEntailmentClassifier(classifier,self.vectors)
+
+    def _make_CRdiff(self):
+        classifier = ClassifierUP('CRdiff')
+        return BaselineEntailmentClassifier(classifier,self.vectors)
+
+    def _make_clarkediff(self):
+        classifier = ClassifierUP('clarkediff')
+        return BaselineEntailmentClassifier(classifier,self.vectors)
+
+    def _make_invCLP(self):
+        classifier = ClassifierP('invCL')
         return BaselineEntailmentClassifier(classifier,self.vectors)
