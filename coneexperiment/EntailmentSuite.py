@@ -50,12 +50,7 @@ class EntailmentSuite(PyExperimentSuite):
 
     def reset(self, params, rep):
         logging.info("Resetting experiment, parameters: %s", str(params))
-        if params['where']=="on_apollo":
-            datadir=params['apollo_datadir']
-        elif params['where']=="local":
-            datadir=params['local_datadir']
-        else:
-            datadir = params['datadir']
+        datadir = params['datadir']
         dataset_path = os.path.join(datadir, params['dataset'] + '.json')
         random.seed(abs(hash(str(params))))
         with open(dataset_path) as dataset_file:
