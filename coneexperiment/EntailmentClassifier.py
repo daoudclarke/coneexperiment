@@ -9,7 +9,7 @@ from scipy import sparse
 
 import numpy as np
 
-from guppy import hpy
+#from guppy import hpy
 
 class EntailmentClassifier:
     def __init__(self, classifier, termDb):
@@ -21,8 +21,8 @@ class EntailmentClassifier:
     def memory_usage(self, message):
         if self.output_memory_usage:
             print message
-            h = hpy()
-            print h.heap()
+#            h = hpy()
+#            print h.heap()
 
     def fit(self, pairs):
         """Train classifier based on a sequence of (word1, word2, entail) tuples.
