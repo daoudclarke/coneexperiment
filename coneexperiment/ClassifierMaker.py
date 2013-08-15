@@ -5,6 +5,7 @@
 import inspect
 
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.svm import LinearSVC
 from sklearn.dummy import DummyClassifier
 from sklearn.grid_search import GridSearchCV
 from sklearn.metrics import confusion_matrix, f1_score
@@ -40,6 +41,10 @@ class ClassifierMaker(object):
     def _make_most_frequent(self):
         dummy = DummyClassifier('most_frequent')
         return EntailmentClassifier(dummy, self.vectors)
+
+    def _make_linsvm(self):
+        linsvm = LinearSVC()
+        return EntailmentClassifier(linsvm,self.vectors)
 
     def _make_conesvm(self):
         classifier = GridSearchCV(
