@@ -5,7 +5,7 @@ import pylab as pl
 import recallPrecision as rp
 import sys
 
-display={'*':'','allBLESS-dependencies':'BLESS','nouns-deps.mi.db':'GW','wiki_random.db':'random','wiki_nounsdeps_events.mi.db':'Wiki','wn-noun-dependencies-directional':'directional','wn-noun-dependencies-original':'original','most_frequent':'dummy'}
+display={'*':'','allBLESS-dependencies':'BLESS','nouns-deps.mi.db':'GW','wiki_random.db':'random','wiki_nounsdeps_events.mi.db':'Wiki','wn-noun-dependencies-directional':'WN2','wn-noun-dependencies-original':'WN1','most_frequent':'dummy'}
 
 class Record:
 
@@ -78,6 +78,7 @@ def gencurve(db,selection):
             points.append((item.precision,item.recall))
             labels.append(item.getlabel())
     rp.plotPrecisionRecallDiagram(maketitle(selection),points,labels)
+
     pl.show()
 
 def maketitle((dl,vl,cl)):
@@ -109,8 +110,8 @@ def reverselookup(alist):
 
 if __name__=="__main__":
 
-    ddatasets=[['BLESS'],['original'],['directional']]
-    #dvectors=[['GW','random']]
+    ddatasets=[['BLESS'],['WN1'],['WN2']]
+    #dvectors=[['GW']]
     dvectors=[['']]
     dclassifiers=[['conesvm','knn','linsvm','invCLP','cosineP','widthdiffP']]
     #dclassifiers =[['']]
@@ -120,6 +121,7 @@ if __name__=="__main__":
     else:
         print "Please enter filename.  Displaying random precision recall curve"
         random()
+        exit()
 
     db=loadfile(filename)
 

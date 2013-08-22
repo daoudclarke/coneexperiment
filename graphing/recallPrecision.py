@@ -27,10 +27,10 @@ def _plotFMeasures(fstepsize=.1, stepsize=0.001):
         points = [(x, _fmeasureCurve(f, x)) for x in p
                               if 0 < _fmeasureCurve(f, x) <= 1.5 ]
         xs, ys = zip(*points)
-        curve, = pl.plot(xs, ys , "--", color="gray", linewidth=0.5)#, label=r"$f=%.1f$"%f) # exclude labels, for legend @UnusedVariable
+        curve, = pl.plot(xs, ys , "--", color="gray", linewidth=2.0)#, label=r"$f=%.1f$"%f) # exclude labels, for legend @UnusedVariable
         # bad hack:
         # gets the 10th last datapoint, from that goes a bit to the left, and a bit down
-        pl.annotate(r"$f=%.1f$" % f, xy=(xs[-10], ys[-10]), xytext=(xs[-10] - 0.05, ys[-10] - 0.035), size="small", color="gray")
+        pl.annotate(r"$f=%.1f$" % f, xy=(xs[-10], ys[-10]), xytext=(xs[-10] - 0.05, ys[-10] - 0.035), size="smaller", color="gray")
 
 #def _contourPlotFMeasure():
 #    delta = 0.01
@@ -55,6 +55,9 @@ def plotPrecisionRecallDiagram(title="title", points=None, labels=None, loc="cen
         into the current canvas. Points is a list of (precision,recall) pairs.
         Optionally you can also provide a labels (list of strings), which will be
         used to create a legend, which is located at loc."""
+
+    pl.rc('axes',linewidth=2)
+    pl.rc('font',size=24)
     if labels != None:
         ax = pl.axes([0.1, 0.1, 0.7, 0.8]) # llc_x, llc_y, width, height
     else:
@@ -75,15 +78,15 @@ def plotPrecisionRecallDiagram(title="title", points=None, labels=None, loc="cen
             label = None
             if labels: label = labels[i]
             print i, x, y, label
-            scp = ax.scatter(x, y, label=label, s=50, linewidths=0.75,
+            scp = ax.scatter(x, y, label=label, s=1000, linewidths=2.0,
                              facecolor=getColor(), alpha=0.75, marker=getMarker())
             scps.append(scp)
             #pl.plot(x,y, label=label, marker=getMarker(), markeredgewidth=0.75, markerfacecolor=getColor())
             #if labels: pl.text(x, y, label, fontsize="x-small")
         if labels:
             #pl.legend(scps, labels, loc=loc, scatterpoints=1, numpoints=1, fancybox=True) # passing scps & labels explicitly to work around a bug with legend seeming to miss out the 2nd scatterplot
-            pl.legend(scps, labels, loc=(1.01, 0), scatterpoints=1, numpoints=1, fancybox=True) # passing scps & labels explicitly to work around a bug with legend seeming to miss out the 2nd scatterplot
-    pl.axis([-0.02, 1.02, -0.02, 1.02]) # xmin, xmax, ymin, ymax
+            pl.legend(scps, labels, loc=(1.01,0), scatterpoints=1, numpoints=1, fancybox=True) # passing scps & labels explicitly to work around a bug with legend seeming to miss out the 2nd scatterplot
+    pl.axis([0.15, 1.02, 0.25, 1.02]) # xmin, xmax, ymin, ymax
     
 
 if __name__ == '__main__':

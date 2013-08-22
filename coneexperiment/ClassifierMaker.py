@@ -37,6 +37,10 @@ class ClassifierMaker(object):
     def _make_knn(self):
         neigh = KNeighborsClassifier(n_neighbors=1)
         return EntailmentClassifier(neigh, self.vectors)
+
+    def _make_knn10(self):
+        neigh =KNeighborsClassifier(n_neighbors=10)
+        return EntailmentClassifier(neigh,self.vectors)
         
     def _make_most_frequent(self):
         dummy = DummyClassifier('most_frequent')
