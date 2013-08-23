@@ -1,6 +1,7 @@
 # Bismilllahi-r-Rahmani-r-Rahim
 
 import unittest
+import logging
 import numpy as np
 from numpy import random
 from StringIO import StringIO
@@ -10,6 +11,9 @@ from coneexperiment.ClassifierMaker import ClassifierMaker
 
 class ClassifierMakerTestCase(unittest.TestCase):
     def setUp(self):
+        logging.basicConfig(filename='log/unittest.log',
+                            level=logging.INFO,
+                            format='%(asctime)s %(process)d %(levelname)s %(message)s')
         random.seed(1001)
 
     def testClassifierMakerNames(self):

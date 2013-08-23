@@ -11,6 +11,9 @@ from coneexperiment.VectorMap import VectorMap
 
 class VectorMapTestCase(unittest.TestCase):
     def setUp(self):
+        logging.basicConfig(filename='log/unittest.log',
+                            level=logging.INFO,
+                            format='%(asctime)s %(process)d %(levelname)s %(message)s')
         logging.info("Starting test: %s", self._testMethodName)
         random.seed(1001)
 
