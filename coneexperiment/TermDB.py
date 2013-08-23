@@ -10,42 +10,6 @@ import json
 import logging
 import codecs
 
-#sys.setdefaultencoding('utf_8')
-
-def create_db(file_path):
-    with open(file_path) as data:
-        db_path = file_path + '.db'
-        try:
-            os.remove(db_path)
-        except OSError:
-            logging.info('Removing existing database and rebuilding')            
-        with sqlite3.connect(db_path) as conn:
-            cursor = conn.cursor()
-            cursor.execute("DROP TABLE IF EXISTS termvector")
-            cursor.execute("""
-                CREATE TABLE termvector
-                (
-                  term TEXT,
-                  pos TEXT,
-                  vector TEXT,
-                  PRIMARY KEY (term, pos)
-                )
-                """)
-            for term, vector in dependencies(data):
-                decoded_term = str.decode(term, 'utf-8')
-                values = (decoded_term.split('/') +
-                          [json.dumps(vector)])
-                if len(values) != 3:
-                    logging.warn("Skipping term '%s': Should be exactly one '/' character",
-                                 decoded_term)
-                    continue
-
-                cursor.execute("""
-                  INSERT INTO termvector (term, pos, vector)
-                  VALUES (?, ?, ?)
-                               """, values)
-
-
     
 def get_features(line):
     split = line.split()
