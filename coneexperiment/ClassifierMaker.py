@@ -34,8 +34,8 @@ class ClassifierMaker(object):
                 if x[0].startswith(MAKE_PREFIX)]
     
 
-    def _make_knn(self):
-        neigh = KNeighborsClassifier(n_neighbors=1)
+    def _make_knnP(self):
+        neigh = GridSearchCV(KNeighborsClassifier(),{'n_neighbors':self.params['k']},score_func=f1_score)
         return EntailmentClassifier(neigh, self.vectors)
 
     def _make_knn10(self):
