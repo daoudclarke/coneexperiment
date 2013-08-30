@@ -22,12 +22,13 @@ class EntailmentSuiteTestCase(unittest.TestCase):
     
     def setUp(self):
         logging.basicConfig(filename='log/unittest.log',
-                            level=logging.INFO,
+                            level=logging.DEBUG,
                             format='%(asctime)s %(process)d %(levelname)s %(message)s')
+        logging.info("Starting test: %s", self._testMethodName)
         try:
             shutil.rmtree('test_data/unittest')
         except OSError as e:
-            print "Warning: ", e
+            logging.warning("Unable to remove unit test temp data: %s", str(e))
         random.seed(1001)
 
     def test_run_and_evaluate(self):

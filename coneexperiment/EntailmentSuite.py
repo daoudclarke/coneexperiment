@@ -59,6 +59,8 @@ class EntailmentSuite(PyExperimentSuite):
         vectors_path = os.path.join(datadir, params['vectors'])
         print "DB path: ", vectors_path
         vectors = TermDB(vectors_path)
+        terms = set(x[0] for x in dataset) | set(x[1] for x in dataset)
+        vectors.nouns.load(terms)
 
         maker = ClassifierMaker(vectors, params)
         classifier = maker.make(params['classifier'])

@@ -45,7 +45,8 @@ class EntailmentClassifier:
     def value_map(self, pairs):
         terms = list(set(x[0] for x in pairs) |
                      set(x[1] for x in pairs))
-        term_dicts = (self.termDb.nouns[x] for x in terms)
+        term_dicts = [self.termDb.nouns[x] for x in terms]
+        logging.debug("Term dicts: %s", str(term_dicts)[:1000])
 
         self.memory_usage("Memory usage before vectorizer():")
         if self.vectorizer:

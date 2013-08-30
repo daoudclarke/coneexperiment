@@ -37,26 +37,32 @@ class TermPosDB(object):
     def __init__(self, db_path, pos):
         self.db_path = db_path
         self.pos = pos
-        self.cache = {}
 
-    def __getitem__(self, key):
-        if key in self.cache:
-            logging.debug('DB getitem: accessed term %s with POS %s from cache',
-                          key, self.pos)
-            return self.cache[key]
-
+    def load(self, terms):
+        """Load the terms into the database. Must be called before use.
+        Pass in the list of terms that will be needed."""
+        self.term_vectors = {}
+        terms = set(terms)
+        logging.debug("Loading terms: %s", str(terms))
         with codecs.open(self.db_path,encoding='utf-8') as db:
             for line in db:
-                if line.startswith(key + '/' + self.pos):
+                term = line.split('/')[0]
+                if term in terms:
                     features = get_dependencies(line)
                     logging.debug('DB getitem: accessed term %s with POS %s from DB',
-                                  key, self.pos)
-                    self.cache[key] = features
+                                  term, self.pos)
+                    self.term_vectors[term] = features
                     return features
 
+    def __getitem__(self, key):
+        if key in self.term_vectors:
+            logging.debug('DB getitem: accessed term %s with POS %s from cache',
+                          key, self.pos)
+            return self.term_vectors[key]
         logging.debug('DB getitem: term %s with POS %s missing in DB',
                       key, self.pos)
         return {}
+
 
 class TermDB(object):
     def __init__(self, db_path):

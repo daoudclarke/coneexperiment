@@ -13,7 +13,7 @@ from utils import testData
 class EntailmentClassifierTestCase(unittest.TestCase):
     def setUp(self):
         logging.basicConfig(filename='log/unittest.log',
-                            level=logging.INFO,
+                            level=logging.DEBUG,
                             format='%(asctime)s %(process)d %(levelname)s %(message)s')
         logging.info("Starting test: %s", self._testMethodName)
         random.seed(1001)

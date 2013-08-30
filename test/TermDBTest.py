@@ -19,18 +19,21 @@ class TermDBTestCase(unittest.TestCase):
 
     def testTermDBTermExists(self):
         term_db = TermDB('test_data/nouns-deps-small-head.mi')
+        term_db.nouns.load(['south','termthatdoesntexist'])
         term_vector = term_db.nouns['south']
         self.assertTrue(type(term_vector) == dict)
         self.assertTrue(len(term_vector) > 0)
 
     def testTermDBTermNotExists(self):
         term_db = TermDB('test_data/nouns-deps-small-head.mi')
+        term_db.nouns.load(['south','termthatdoesntexist'])
         term_vector = term_db.nouns['termthatdoesntexist']
         self.assertTrue(type(term_vector) == dict)
         self.assertEqual(0, len(term_vector))
 
     def testCachedTermsWork(self):
         term_db = TermDB('test_data/nouns-deps-small-head.mi')
+        term_db.nouns.load(['south','termthatdoesntexist'])
         term_vector = term_db.nouns['south']
         cached_term_vector = term_db.nouns['south']
         self.assertTrue(type(term_vector) == dict)
