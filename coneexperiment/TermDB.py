@@ -44,12 +44,16 @@ class TermPosDB(object):
         self.term_vectors = {}
         terms = set(terms)
         logging.debug("Loading terms: %s", str(terms))
-        with codecs.open(self.db_path,encoding='utf-8') as db:
-            for line in db:
+        # with codecs.open(self.db_path,encoding='utf-8') as db:
+        #     for line in db:
+        with open(self.db_path) as db:
+            for encoded_line in db:
+                line = str.decode(encoded_line, 'utf-8')
                 term = line.split('/')[0]
+                logging.debug("DB load: checking term %s", term)
                 if term in terms:
                     features = get_dependencies(line)
-                    logging.debug('DB getitem: accessed term %s with POS %s from DB',
+                    logging.debug('DB load: accessed term %s with POS %s from DB',
                                   term, self.pos)
                     self.term_vectors[term] = features
                     return features
