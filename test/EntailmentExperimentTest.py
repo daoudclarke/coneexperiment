@@ -17,7 +17,7 @@ class EntailmentExperimentTestCase(unittest.TestCase):
         random.seed(1001)
 
     def testEntailmentExperimentKnn(self):
-        results = self.runExperiment('knn')
+        results = self.runExperiment('knnP')
         confusion = np.sum([x[0] for x in results], axis=0)
         self.assertEqual(accuracy(confusion), 1.0)
 
@@ -31,7 +31,7 @@ class EntailmentExperimentTestCase(unittest.TestCase):
         all_data = (data + test_data)*3
         #print all_data
 
-        maker = ClassifierMaker(vectors)
+        maker = ClassifierMaker(vectors, params = {'k':[1]} )
         classifier = maker.make(classifier_name)
 
         num_folds = 3

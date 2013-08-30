@@ -28,7 +28,7 @@ class ClassifierMakerTestCase(unittest.TestCase):
         data, test_data, vectors = testData()
         class_values = set(x[2] for x in data)
 
-        params = {'beta':[1.0, 2.0], 'costs':[1.0]}
+        params = {'beta':[1.0, 2.0], 'costs':[1.0], 'k':[1]}
 
         maker = ClassifierMaker(vectors, params)
         names = maker.get_names()
