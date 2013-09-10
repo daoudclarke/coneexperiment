@@ -45,8 +45,7 @@ class EntailmentClassifier:
     def value_map(self, pairs):
         terms = list(set(x[0] for x in pairs) |
                      set(x[1] for x in pairs))
-        term_dicts = [self.termDb.nouns[x] for x in terms]
-        logging.debug("Term dicts: %s", str(term_dicts)[:1000])
+        term_dicts = (self.termDb.nouns[x] for x in terms)
 
         self.memory_usage("Memory usage before vectorizer():")
         if self.vectorizer:
@@ -56,6 +55,21 @@ class EntailmentClassifier:
             term_vectors = self.vectorizer.fit_transform(term_dicts)
         term_map = {terms[i]:term_vectors[i] for i in range(len(terms))}
         self.memory_usage("Memory usage after vectorizer():")
-        return sparse.vstack(term_map[p[1]] - term_map[p[0]]
-                             for p in pairs)
-        
+        return self.vector_op(term_map,pairs)
+
+    def vector_op(self,term_map, pairs):
+        return sparse.vstack(term_map[p[1]] - term_map[p[0]] for p in pairs)
+
+class AddVectorClassifier(EntailmentClassifier):
+
+    def vector_op(self,term_map,pairs):
+        return sparse.vstack(term_map[p[1]] + term_map[p[0
+        ]] for p in pairs)
+
+class MultVectorClassifier(EntailmentClassifier):
+    def vector_op(self,term_map,pairs):
+        return sparse.vstack(term_map[p[1]].multiply(term_map[p[0]]) for p in pairs)
+
+class TensorVectorClassifier(EntailmentClassifier):
+    def vector_op(self,term_map,pairs):
+        return sparse.vstack(sparse.hstack([term_map[p[1]],term_map[p[0]]]) for p in pairs)

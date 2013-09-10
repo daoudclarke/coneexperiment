@@ -76,9 +76,12 @@ class SimCalculator(object):
     def _compute_invCL(self,pair,term_map):
         pre = self._compute_pre(pair,term_map,True)
         rec = self._compute_pre((pair[1],pair[0]),term_map,True)
-        return math.pow(pre*(1-rec),0.5)
+        tmp = pre*(1-rec)
+        if tmp>0:
+            return math.pow(pre*(1-rec),0.5)
+        else:
 
-
+            return 0
 
 if __name__=="__main__":
 
