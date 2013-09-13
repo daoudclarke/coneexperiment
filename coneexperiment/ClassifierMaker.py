@@ -12,7 +12,7 @@ from sklearn.metrics import confusion_matrix, f1_score
 
 from learncone.ConeEstimatorSVM import ConeEstimatorSVM
 
-from coneexperiment.EntailmentClassifier import EntailmentClassifier,AddVectorClassifier,MultVectorClassifier,TensorVectorClassifier
+from coneexperiment.EntailmentClassifier import EntailmentClassifier,AddVectorClassifier,MultVectorClassifier,CatVectorClassifier
 from baseline.baselineClassifier import BaselineEntailmentClassifier
 from baseline.baselineClassifier import WidthClassifierUP, WidthClassifierP,ClassifierP,ClassifierUP
 
@@ -58,9 +58,9 @@ class ClassifierMaker(object):
         linsvm = LinearSVC()
         return MultVectorClassifier(linsvm,self.vectors)
 
-    def _make_linsvmTENSOR(self):
+    def _make_linsvmCAT(self):
         linsvm = LinearSVC()
-        return TensorVectorClassifier(linsvm,self.vectors)
+        return CatVectorClassifier(linsvm,self.vectors)
 
     def _make_conesvm(self):
         classifier = GridSearchCV(
