@@ -5,7 +5,7 @@ import pylab as pl
 import recallPrecision as rp
 import sys
 
-display={'*':'','allBLESS-dependencies':'BLESS','nouns-deps.mi.db':'GW','wiki_random.db':'random','wiki_nounsdeps_events.mi.db':'Wiki','wn-noun-dependencies-directional':'WN2','wn-noun-dependencies-original':'WN1','most_frequent':'dummy'}
+display={'*':'','allBLESS-dependencies':'BLESS','nouns-deps.mi':'GW','wiki_random':'random','wiki_nounsdeps_events.mi':'Wiki','wn-noun-dependencies-directional':'WN2','wn-noun-dependencies-original':'WN1','most_frequent':'dummy','BLESS_coord':'BLEco','linsvmTENSOR':'linsvmCAT','knnP':'knnDIFF'}
 
 class Record:
 
@@ -110,18 +110,30 @@ def reverselookup(alist):
 
 if __name__=="__main__":
 
-    ddatasets=[['BLESS'],['WN1'],['WN2']]
-    #dvectors=[['GW']]
-    dvectors=[['']]
-    dclassifiers=[['conesvm','knn','linsvm','invCLP','cosineP','widthdiffP']]
-    #dclassifiers =[['']]
-
     if len(sys.argv)>1:
         filename=sys.argv[1]
     else:
         print "Please enter filename.  Displaying random precision recall curve"
         random()
         exit()
+
+    if sys.argv[2] == "coord":
+        dvectors=[['GW'],['random'],['Wiki']]
+        ddatasets=[['BLEco']]
+        dclassifiers=[['conesvm','knnDIFF','linsvmDIFF','linsvmCAT','linsvmADD','linsvmMULT','cosineP','widthdiff','invCLP']]
+    elif sys.argv[2] == "ent1":
+        ddatasets=[['BLESS'],['WN1'],['WN2']]
+        dvectors=[['GW'],['random'],['Wiki']]
+        dclassifiers=[['']]
+    elif sys.argv[2] == "ent-vectors":
+        dvectors=[['']]
+        ddatasets=[['BLESS'],['WN1'],['WN2']]
+        dclassifiers=[['cosineP','knnDIFF','linsvmCAT','widthdiff','invCLP']]
+
+    else:
+        dclassifiers=[['']]
+        dvectors=[['']]
+        ddatasets=[['']]
 
     db=loadfile(filename)
 

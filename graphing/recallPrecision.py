@@ -86,7 +86,7 @@ def plotPrecisionRecallDiagram(title="title", points=None, labels=None, loc="cen
         if labels:
             #pl.legend(scps, labels, loc=loc, scatterpoints=1, numpoints=1, fancybox=True) # passing scps & labels explicitly to work around a bug with legend seeming to miss out the 2nd scatterplot
             pl.legend(scps, labels, loc=(1.01,0), scatterpoints=1, numpoints=1, fancybox=True) # passing scps & labels explicitly to work around a bug with legend seeming to miss out the 2nd scatterplot
-    pl.axis([0.15, 1.02, 0.25, 1.02]) # xmin, xmax, ymin, ymax
+    pl.axis([0, 1.02, 0, 1.02]) # xmin, xmax, ymin, ymax
     
 
 if __name__ == '__main__':

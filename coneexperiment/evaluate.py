@@ -73,10 +73,15 @@ def evaluate_all(path):
         try:
             joined = os.path.join(path,experiment)
             if os.path.isdir(joined):
+                print joined
                 params = suite.get_params(joined)
                 row = evaluate(joined)
                 rows.append(row)
+            else:
+                #print "Warning: not directory",joined
+                continue
         except MissingDataException:
+            #print "Warning: MissingDataException"
             continue
     return rows
 
@@ -107,6 +112,7 @@ def evaluate_dimensions(path):
                 write_summary(rows, 'analysis/' + params['dataset'] + '_dims.csv')
 
         except MissingDataException:
+
             continue
 
 
@@ -121,7 +127,10 @@ if __name__ == "__main__":
     else:
         path = sys.argv[1]
         rows = evaluate_all(path)
-        write_summary(rows, 'analysis/output.csv')
+        #print rows
+        name=sys.argv[1].split('/')[-1]
+        outfile ='analysis/'+name+'.csv'
+        write_summary(rows, outfile)
         evaluate_dimensions(path)
 
 
