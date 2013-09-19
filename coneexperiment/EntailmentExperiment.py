@@ -8,7 +8,8 @@ from sklearn.cross_validation import KFold
 
 from datetime import datetime
 import hashlib
-
+from baseline import tools
+import logging
 
 class EntailmentExperiment(object):
     def __init__(self, dataset, classifier, num_folds):
@@ -32,4 +33,40 @@ class EntailmentExperiment(object):
         test_target = [x[2] for x in test]
         confusion = confusion_matrix(test_target, results)
         
-        return confusion, time, 'Dummy test'
+        return confusion, time, 'Kfold test'
+
+class EntailmentExperimentHeldOut(EntailmentExperiment):
+
+    def __init__(self,dataset,classifier,num_folds,blesspath):
+        self.dataset = dataset
+        self.classifier = classifier
+        self.num_folds = num_folds
+        self.annotation = tools.annotate(self.num_folds,blesspath)  #dictionary of bless concepts annotated with cross-validation fold
+
+
+    def runFold(self,fold):
+        train_indices=[]
+        test_indices=[]
+        for i,[w1,w2,sc] in enumerate(self.dataset):
+            if self.annotation.get(w1,-1)==fold or self.annotation.get(w2,-1)==fold:
+                test_indices.append(i)
+            else:
+                train_indices.append(i)
+
+        message="Fold "+str(fold)+", training set size: "+str(len(train_indices))+", test set size: "+str(len(test_indices))
+        logging.info(message)
+        print message
+
+        train = [self.dataset[i] for i in train_indices]
+        test = [self.dataset[i] for i in test_indices]
+
+        start = datetime.now()
+        self.classifier.fit(train)
+        time = datetime.now() - start
+        results = self.classifier.predict(test)
+
+        test_target = [x[2] for x in test]
+        confusion = confusion_matrix(test_target, results)
+
+        return confusion, time, 'Held out test'
+

@@ -19,7 +19,7 @@ except ImportError:
     from sklearn.metrics import zero_one_score
     accuracy_score = zero_one_score
 
-from EntailmentExperiment import EntailmentExperiment
+from EntailmentExperiment import EntailmentExperiment, EntailmentExperimentHeldOut
 from ClassifierMaker import ClassifierMaker
 #from VectorMap import VectorMap
 from TermDB import TermDB
@@ -29,6 +29,7 @@ from learncone.ConeEstimator import ConeEstimator
 from learncone.ConeEstimatorGreedy import ConeEstimatorGreedy
 from learncone.ConeEstimatorSVM import ConeEstimatorSVM
 from learncone.ArtificialData import make_data
+from baseline import tools
 
 import evaluate
 
@@ -69,7 +70,7 @@ class EntailmentSuite(PyExperimentSuite):
         self.experiment = EntailmentExperiment(dataset, classifier, num_folds)
         
     def iterate(self, params, rep, n):
-        logging.info("Beggining iteration %d, repetition %d", n, rep)
+        logging.info("Beginning iteration %d, repetition %d", n, rep)
         assert n == 0
         confusion, time, info = self.experiment.runFold(rep)
         
@@ -85,8 +86,16 @@ class EntailmentSuite(PyExperimentSuite):
         options, args = super(EntailmentSuite, self).parse_opt()
         self.options.__dict__.update(self.additional_options)
 
+class EntailmentSuiteHeldOut(EntailmentSuite):
+    def reset(self,params,rep):
+        EntailmentSuite.reset(self,params,rep)#call super method to get vectors path and classifier setup
+        blesspath = os.path.join(params['datadir'],params['blesspath'])
+        self.experiment = EntailmentExperimentHeldOut(self.experiment.dataset,self.experiment.classifier, self.experiment.num_folds,blesspath)
+
+
 def run_and_evaluate(**suite_params):
-    suite = EntailmentSuite(**suite_params)
+#    suite = EntailmentSuite(**suite_params)
+    suite = EntailmentSuiteHeldOut(**suite_params)
     suite.start()
 
     experiments = suite.cfgparser.sections()

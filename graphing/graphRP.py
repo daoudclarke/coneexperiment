@@ -118,17 +118,21 @@ if __name__=="__main__":
         exit()
 
     if sys.argv[2] == "coord":
-        dvectors=[['GW'],['random'],['Wiki']]
+        dvectors=[['Wiki']]
         ddatasets=[['BLEco']]
-        dclassifiers=[['conesvm','knnDIFF','linsvmDIFF','linsvmCAT','linsvmADD','linsvmMULT','cosineP','widthdiff','invCLP']]
-    elif sys.argv[2] == "ent1":
-        ddatasets=[['BLESS'],['WN1'],['WN2']]
-        dvectors=[['GW'],['random'],['Wiki']]
-        dclassifiers=[['']]
+        dclassifiers=[['knnDIFF','linsvmDIFF','linsvmCAT','linsvmADD','linsvmMULT','cosineP','widthdiff','invCLP']]
+    elif sys.argv[2] == "coord-vectors":
+        dvectors=[['']]
+        ddatasets=[['BLEco']]
+        dclassifiers=[['cosineP','linsvmCAT','widthdiff']]
+    elif sys.argv[2] == "ent":
+        ddatasets=[['BLESS']]
+        dvectors=[['Wiki']]
+        dclassifiers=[['knnDIFF','linsvmDIFF','linsvmCAT','linsvmADD','linsvmMULT','cosineP','widthdiff','invCLP','CRdiff','clarkediff']]
     elif sys.argv[2] == "ent-vectors":
         dvectors=[['']]
-        ddatasets=[['BLESS'],['WN1'],['WN2']]
-        dclassifiers=[['cosineP','knnDIFF','linsvmCAT','widthdiff','invCLP']]
+        ddatasets=[['BLESS']]
+        dclassifiers=[['cosineP','linsvmCAT','widthdiff']]
 
     else:
         dclassifiers=[['']]

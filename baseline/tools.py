@@ -1,8 +1,9 @@
 __author__ = 'juliewe'
 
-import sys
+import sys,json,os, random
 
 vectors="data/nouns-deps.mi"
+
 
 def count(word):
 
@@ -27,11 +28,63 @@ def count(word):
                 break
 
 
+def readbless(blesspath="../BLESS/data/BLESS.txt"):
+    with open(blesspath) as datafile:
+
+        concepts=[]
+        for line in datafile:
+            fields = line.split('\t')
+            concept = fields[0].split('-')[0]
+            if concept not in concepts:
+                concepts.append(concept)
+    return concepts
+
+
+def split(filename):
+    num_folds=5
+    bless = readbless()
+    foldsize=len(bless)/num_folds
+
+    datapath = os.path.join('data',filename+'.json')
+    with open(datapath) as datafile:
+        dataset = json.load(datafile)
+        #print dataset
+
+    random.seed(abs(hash(str(bless))))
+    random.shuffle(bless)
+
+    blessdict={}
+
+    for i in range(len(bless)):
+        blessdict[bless[i]]=i/foldsize
+    newdataset=[]
+    for [w1,w2,sc] in dataset:
+        fold=blessdict.get(w1,blessdict.get(w2,-1))
+        if fold == -1:
+            print "Warning, both concepts not in bless ",w1,w2
+        newdataset.append([w1,w2,sc,fold])
+    print newdataset
+
+def annotate(num_folds,filename):
+    bless=readbless(filename)
+    foldsize=len(bless)/num_folds
+    random.seed(abs(hash(str(bless))))
+    random.shuffle(bless)
+    blessdict={}
+
+    for i in range(len(bless)):
+        blessdict[bless[i]]=i/foldsize
+    return blessdict
+
 
 if __name__=="__main__":
 
-    word = sys.argv[1]
-    count(word)
+    if sys.argv[1] == "count":
+        word = sys.argv[2]
+        count(word)
+    elif sys.argv[1] == "split":
+        filename = sys.argv[2]
+        split(filename)
 
 
 #abortion 773 761
