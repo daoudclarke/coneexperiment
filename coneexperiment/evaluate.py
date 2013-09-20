@@ -52,7 +52,7 @@ def evaluate(experiment):
 
     suite = PyExperimentSuite()
     params = suite.get_params(experiment)
-    row = [(x,params[x]) for x in ['dataset','classifier','vectors']]
+    row = [(x,params.get(x,'n/a')) for x in ['dataset','classifier','vectors','testset']]
     for name, (value, error) in summary:
         row.append( (name,value) )
         row.append( (name + " error", error) )

@@ -55,7 +55,7 @@ class EntailmentExperimentHeldOut(EntailmentExperiment):
 
         message="Fold "+str(fold)+", training set size: "+str(len(train_indices))+", test set size: "+str(len(test_indices))
         logging.info(message)
-        print message
+        #print message
 
         train = [self.dataset[i] for i in train_indices]
         test = [self.dataset[i] for i in test_indices]
@@ -70,3 +70,20 @@ class EntailmentExperimentHeldOut(EntailmentExperiment):
 
         return confusion, time, 'Held out test'
 
+class EntailmentExperimentTrainTest(EntailmentExperiment):
+
+    def __init__(self,trainset,classifier,testset):
+        self.num_folds=1
+        self.dataset=trainset
+        self.classifier=classifier
+        self.testset=testset
+
+
+    def runFold(self,fold):
+        start = datetime.now()
+        self.classifier.fit(self.dataset)
+        time = datetime.now()-start
+        results=self.classifier.predict(self.testset)
+        test_target=[x[2] for x in self.testset]
+        confusion = confusion_matrix(test_target,results)
+        return confusion, time, 'Single Train-Test run'

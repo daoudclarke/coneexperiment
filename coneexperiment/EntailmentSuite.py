@@ -19,7 +19,7 @@ except ImportError:
     from sklearn.metrics import zero_one_score
     accuracy_score = zero_one_score
 
-from EntailmentExperiment import EntailmentExperiment, EntailmentExperimentHeldOut
+from EntailmentExperiment import EntailmentExperiment, EntailmentExperimentHeldOut, EntailmentExperimentTrainTest
 from ClassifierMaker import ClassifierMaker
 #from VectorMap import VectorMap
 from TermDB import TermDB
@@ -92,10 +92,30 @@ class EntailmentSuiteHeldOut(EntailmentSuite):
         blesspath = os.path.join(params['datadir'],params['blesspath'])
         self.experiment = EntailmentExperimentHeldOut(self.experiment.dataset,self.experiment.classifier, self.experiment.num_folds,blesspath)
 
+class EntailmentSuiteTrainTest(EntailmentSuite):
+    def reset(self,params,rep):
+        EntailmentSuite.reset(self,params,rep)
+        datadir = params['datadir']
+        testset_path = os.path.join(datadir, params['testset'] + '.json')
+        with open(testset_path) as dataset_file:
+            testset = json.load(dataset_file)
+
+        self.experiment = EntailmentExperimentTrainTest(self.experiment.dataset,self.experiment.classifier, testset)
+
 
 def run_and_evaluate(**suite_params):
-#    suite = EntailmentSuite(**suite_params)
-    suite = EntailmentSuiteHeldOut(**suite_params)
+
+
+    suite = EntailmentSuite(**suite_params)
+    try:
+        type = eval(suite.cfgparser.get('DEFAULT', 'type'))
+    except:
+        logging.info("Warning: type of experiment not sepcified.  Assuming cross-validation.")
+        type="cv"
+    if type=="heldout":
+        suite = EntailmentSuiteHeldOut(**suite_params)
+    elif type=="traintest":
+        suite = EntailmentSuiteTrainTest(**suite_params)
     suite.start()
 
     experiments = suite.cfgparser.sections()

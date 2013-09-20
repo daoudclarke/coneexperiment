@@ -76,16 +76,48 @@ def annotate(num_folds,filename):
         blessdict[bless[i]]=i/foldsize
     return blessdict
 
+def compare(fp1,fp2):
+    with open(fp1) as file1:
+        data1=json.load(file1)
+    with open(fp2) as file2:
+        data2=json.load(file2)
+    print "File 1 ",fp1
+    print "File 2 ",fp2
+    dict1={}
+    dict2={}
+    for[w1,w2,sc] in data1:
+        dict1[w1]=dict1.get(w1,0)+1
+        dict1[w2]=dict1.get(w2,0)+1
+    for[w1,w2,sc] in data2:
+        dict2[w1]=dict2.get(w1,0)+1
+        dict2[w2]=dict2.get(w2,0)+1
+
+    inter =0
+    for key in dict1.keys():
+        if key in dict2.keys():
+            inter+=1
+    print "% of file 2 concepts by type also in File 1 ",str(inter*100.0/len(dict2.keys()))
+    print "% of file 1 concepts by type also in File 2 ",str(inter*100.0/len(dict1.keys()))
+
+
 
 if __name__=="__main__":
 
+    datapath="data"
     if sys.argv[1] == "count":
         word = sys.argv[2]
         count(word)
     elif sys.argv[1] == "split":
+
         filename = sys.argv[2]
         split(filename)
 
+    elif sys.argv[1] == "compare":
+        file1 = sys.argv[2]
+        file2 = sys.argv[3]
+        filepath1=os.path.join(datapath,file1+'.json')
+        filepath2=os.path.join(datapath,file2+'.json')
+        compare(filepath1,filepath2)
 
 #abortion 773 761
 #event 5075 4765
