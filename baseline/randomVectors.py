@@ -1,10 +1,6 @@
 __author__ = 'juliewe'
 
-import random
-
-basefile='data/wiki_nounsdeps_events.mi'
-outfile='data/wiki_random'
-dimensions = 10
+import random,sys
 
 def getword(line):
     line = line.rstrip()
@@ -20,6 +16,14 @@ def random_output(word,outstream):
     outstream.write('\n')
 
 if __name__=="__main__":
+    basefile='data/wiki_nounsdeps_events.mi'
+    outfile='data/wiki_random'
+    dimensions = 10
+    if (len(sys.argv)>1):
+        dimensions = int (sys.argv[1])
+
+    print "Number of dimensions is "+str(dimensions)
+    outfile=outfile+str(dimensions)
 
     with open(basefile,'r') as instream:
         with open(outfile,'w') as outstream:

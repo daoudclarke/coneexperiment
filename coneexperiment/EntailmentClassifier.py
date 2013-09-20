@@ -73,3 +73,7 @@ class MultVectorClassifier(EntailmentClassifier):
 class CatVectorClassifier(EntailmentClassifier):
     def vector_op(self,term_map,pairs):
         return sparse.vstack(sparse.hstack([term_map[p[1]],term_map[p[0]]]) for p in pairs)
+
+class SingleVectorClassifier(EntailmentClassifier):
+    def vector_op(self,term_map,pairs):
+        return sparse.vstack(sparse.hstack([term_map[p[1]]]) for p in pairs)
