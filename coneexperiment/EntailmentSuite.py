@@ -19,7 +19,7 @@ except ImportError:
     from sklearn.metrics import zero_one_score
     accuracy_score = zero_one_score
 
-from EntailmentExperiment import EntailmentExperiment, EntailmentExperimentHeldOut, EntailmentExperimentTrainTest
+from EntailmentExperiment import EntailmentExperiment, EntailmentExperimentHeldOut, EntailmentExperimentTrainTest, EntailmentExperimentHeldOutStrict
 from ClassifierMaker import ClassifierMaker
 #from VectorMap import VectorMap
 from TermDB import TermDB
@@ -92,15 +92,36 @@ class EntailmentSuiteHeldOut(EntailmentSuite):
         blesspath = os.path.join(params['datadir'],params['blesspath'])
         self.experiment = EntailmentExperimentHeldOut(self.experiment.dataset,self.experiment.classifier, self.experiment.num_folds,blesspath)
 
+class EntailmentSuiteHeldOutStrict(EntailmentSuite):
+    def reset(self,params,rep):
+        EntailmentSuite.reset(self,params,rep)#call super method to get vectors path and classifier setup
+        blesspath = os.path.join(params['datadir'],params['blesspath'])
+        self.experiment = EntailmentExperimentHeldOutStrict(self.experiment.dataset,self.experiment.classifier, self.experiment.num_folds,blesspath)
+
 class EntailmentSuiteTrainTest(EntailmentSuite):
     def reset(self,params,rep):
-        EntailmentSuite.reset(self,params,rep)
+        #EntailmentSuite.reset(self,params,rep)
+        logging.info("Resetting experiment, parameters: %s", str(params))
         datadir = params['datadir']
+        dataset_path = os.path.join(datadir, params['dataset'] + '.json')
+        random.seed(abs(hash(str(params))))
+        with open(dataset_path) as dataset_file:
+            dataset = json.load(dataset_file)
+
         testset_path = os.path.join(datadir, params['testset'] + '.json')
         with open(testset_path) as dataset_file:
             testset = json.load(dataset_file)
 
-        self.experiment = EntailmentExperimentTrainTest(self.experiment.dataset,self.experiment.classifier, testset)
+        vectors_path = os.path.join(datadir, params['vectors'])
+        print "DB path: ", vectors_path
+        vectors = TermDB(vectors_path)
+        terms = set(x[0] for x in dataset) | set(x[1] for x in dataset) | set(x[0] for x in testset) | set(x[1] for x in testset)
+        vectors.nouns.load(terms)
+
+        maker = ClassifierMaker(vectors, params)
+        classifier = maker.make(params['classifier'])
+
+        self.experiment = EntailmentExperimentTrainTest(dataset,classifier, testset)
 
 
 def run_and_evaluate(**suite_params):
@@ -116,6 +137,8 @@ def run_and_evaluate(**suite_params):
         suite = EntailmentSuiteHeldOut(**suite_params)
     elif type=="traintest":
         suite = EntailmentSuiteTrainTest(**suite_params)
+    elif type=="heldoutstrict":
+        suite = EntailmentSuiteHeldOutStrict(**suite_params)
     suite.start()
 
     experiments = suite.cfgparser.sections()
