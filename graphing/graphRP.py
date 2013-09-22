@@ -5,27 +5,30 @@ import pylab as pl
 import recallPrecision as rp
 import sys
 
-display={'*':'','allBLESS-dependencies':'BLESS','nouns-deps.mi':'GW','wiki_random':'random','wiki_nounsdeps_events.mi':'Wiki','wn-noun-dependencies-directional':'WN2','wn-noun-dependencies-original':'WN1','most_frequent':'dummy','BLESS_coord':'BLEco','linsvmTENSOR':'linsvmCAT','knnP':'knnDIFF'}
+display={'*':'','allBLESS-dependencies':'BLEent','nouns-deps.mi':'GW','wiki_random':'random','wiki_nounsdeps_events.mi':'Wiki','wn-noun-dependencies-directional':'WN2','wn-noun-dependencies-original':'WN1','most_frequent':'dummy','BLESS_coord':'BLEco','linsvmTENSOR':'linsvmCAT','knnP':'knnDIFF'}
 
 class Record:
 
     def __init__(self,line):
 
         fields=line.split(',')
-        if len(fields)==13:
+        if len(fields)==13 or len(fields)==14:
+            offset=len(fields)-13
             self.dataset=fields[0]
             self.classifier=fields[1]
             self.vectors=fields[2]
-            self.accuracy=float(fields[3])
-            self.accerror=float(fields[4])
-            self.precision=float(fields[5])
-            self.preerror=float(fields[6])
-            self.recall=float(fields[7])
-            self.recallerror=float(fields[8])
-            self.f1=float(fields[9])
-            self.f1error=float(fields[10])
-            self.time=float(fields[11])
-            self.timeerror=float(fields[12])
+            self.accuracy=float(fields[3+offset])
+            self.accerror=float(fields[4+offset])
+            self.precision=float(fields[5+offset])
+            self.preerror=float(fields[6+offset])
+            self.recall=float(fields[7+offset])
+            self.recallerror=float(fields[8+offset])
+            self.f1=float(fields[9+offset])
+            self.f1error=float(fields[10+offset])
+            self.time=float(fields[11+offset])
+            self.timeerror=float(fields[12+offset])
+            if offset ==1:
+                self.testset=fields[3]
         else:
             print "No record created for "+line
             print "Number of fields is "+str(len(fields))
@@ -61,11 +64,13 @@ def loadfile(filename):
     lines=0
     with open(filename,'r') as instream:
         for line in instream:
+
             if lines>0:
                 record=Record(line.rstrip())
                 label=record.getlabel()
                 db[label]=record
             lines+=1
+
     print"Read "+str(lines)+" lines from "+filename
     return db
 
@@ -126,12 +131,12 @@ if __name__=="__main__":
         ddatasets=[['BLEco']]
         dclassifiers=[['cosineP','linsvmCAT','widthdiff']]
     elif sys.argv[2] == "ent":
-        ddatasets=[['BLESS']]
+        ddatasets=[['BLEent']]
         dvectors=[['Wiki']]
         dclassifiers=[['knnDIFF','linsvmDIFF','linsvmCAT','linsvmADD','linsvmMULT','cosineP','widthdiff','invCLP','CRdiff','clarkediff']]
     elif sys.argv[2] == "ent-vectors":
         dvectors=[['']]
-        ddatasets=[['BLESS']]
+        ddatasets=[['BLEent']]
         dclassifiers=[['cosineP','linsvmCAT','widthdiff']]
 
     else:
