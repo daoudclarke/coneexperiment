@@ -14,7 +14,7 @@ from learncone.ConeEstimatorSVM import ConeEstimatorSVM
 
 from coneexperiment.EntailmentClassifier import EntailmentClassifier,AddVectorClassifier,MultVectorClassifier,CatVectorClassifier, SingleVectorClassifier
 from baseline.baselineClassifier import BaselineEntailmentClassifier
-from baseline.baselineClassifier import WidthClassifierUP, WidthClassifierP,ClassifierP,ClassifierUP
+from baseline.baselineClassifier import WidthClassifierUP, WidthClassifierP,ClassifierP,ClassifierUP, SingleWidthClassifierP
 
 MAKE_PREFIX = '_make_'
 
@@ -76,6 +76,10 @@ class ClassifierMaker(object):
 
     def _make_widthdiff(self):
         classifier = WidthClassifierUP('widthdiff')
+        return BaselineEntailmentClassifier(classifier, self.vectors)
+
+    def _make_singlewidth(self):
+        classifier = SingleWidthClassifierP('singlewidth')
         return BaselineEntailmentClassifier(classifier, self.vectors)
 
     def _make_widthdiffP(self):

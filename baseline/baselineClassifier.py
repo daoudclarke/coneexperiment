@@ -68,6 +68,60 @@ class WidthClassifierP(WidthClassifierUP):
         self.widthparameter=float(Separator.separate(ones,zeros))
         logging.info("Baseline: "+self.name+", Parameter set as "+str(self.widthparameter))
 
+class SingleWidthClassifierP:
+    def __init__(self,name):
+        self.name=name
+        self.widthparameter=0
+
+    def fit(self,pairs,term_map,target):
+
+    #       print "Baseline: setting parameter for "+self.name
+
+        width_map={}
+
+        for term in term_map.keys():
+            width_map[term]=term_map[term].getnnz()
+
+
+        ones=[]
+        zeros=[]
+        for pair,target in zip(pairs,target):
+            wd = width_map[pair[1]]
+            if target==1:
+                ones.append(wd)
+            else:
+                zeros.append(wd)
+            #        print len(ones), len(zeros)
+
+        self.widthparameter=float(Separator.separate(ones,zeros))
+        logging.info("Baseline: "+self.name+", Parameter set as "+str(self.widthparameter))
+
+
+
+    def predict(self,pairs, term_map):
+        #term_map is dictionary from terms (in pairs) to vectors
+        #print "Baseline prediction: "+self.name
+        #print "Generating width_map from "+str(len(term_map.keys()))+" keys"
+        print "Width parameter selected is "+str(self.widthparameter)
+        width_map={}
+        #done=0
+        for term in term_map.keys():
+            width_map[term]=term_map[term].getnnz()
+            #    done+=1
+        #    if done%500==0:print "Processed "+str(done)+" terms"
+
+        #print "Test: event = ",width_map["event"]
+
+        tags=[]
+        for p in pairs:
+            wd = width_map[p[1]]
+            if wd > self.widthparameter:
+                tags.append(1)
+            else:
+                tags.append(0)
+
+        return np.array(tags,dtype=int)
+
 class ClassifierUP():
     def __init__(self,name):
         self.metric=name
