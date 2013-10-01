@@ -33,7 +33,7 @@ class EntailmentExperiment(object):
         test_target = [x[2] for x in test]
         confusion = confusion_matrix(test_target, results)
         
-        return confusion, time, 'Kfold test'
+        return confusion, time, 'Kfold test', results, test_target
 
 class EntailmentExperimentHeldOut(EntailmentExperiment):
 
@@ -68,7 +68,7 @@ class EntailmentExperimentHeldOut(EntailmentExperiment):
         test_target = [x[2] for x in test]
         confusion = confusion_matrix(test_target, results)
 
-        return confusion, time, 'Held out test'
+        return confusion, time, 'Held out test',results, test_target
 
 class EntailmentExperimentHeldOutStrict(EntailmentExperiment):
 
@@ -107,7 +107,7 @@ class EntailmentExperimentHeldOutStrict(EntailmentExperiment):
         test_target = [x[2] for x in test]
         confusion = confusion_matrix(test_target, results)
 
-        return confusion, time, 'Strict held out test'
+        return confusion, time, 'Strict held out test',results,test_target
 
 
 class EntailmentExperimentTrainTest(EntailmentExperiment):
@@ -126,4 +126,4 @@ class EntailmentExperimentTrainTest(EntailmentExperiment):
         results=self.classifier.predict(self.testset)
         test_target=[x[2] for x in self.testset]
         confusion = confusion_matrix(test_target,results)
-        return confusion, time, 'Single Train-Test run'
+        return confusion, time, 'Single Train-Test run', results

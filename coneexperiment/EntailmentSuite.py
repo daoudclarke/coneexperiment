@@ -72,14 +72,16 @@ class EntailmentSuite(PyExperimentSuite):
     def iterate(self, params, rep, n):
         logging.info("Beginning iteration %d, repetition %d", n, rep)
         assert n == 0
-        confusion, time, info = self.experiment.runFold(rep)
+        confusion, time, info, predictions, target = self.experiment.runFold(rep)
         
         return {'rep':rep,
                 'iter':n,
                 'confusion':confusion,
                 'time':time.total_seconds(),
                 'classifier':params['classifier'],
-                'info': info}
+                'info': info,
+                'predictions': predictions,
+                'target': target}
 
     def parse_opt(self):
         """ parses the command line options for different settings. """
