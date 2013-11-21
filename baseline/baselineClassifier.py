@@ -18,7 +18,7 @@ class WidthClassifierUP:
 
     def fit(self,pairs, data,target):
         logging.info("Baseline fit: Ignoring training data as unsupervised classifier: "+self.name)
-
+        #print ("Baseline fit: ignoring training data")
 
     def predict(self,pairs, term_map):
         #term_map is dictionary from terms (in pairs) to vectors
@@ -31,7 +31,7 @@ class WidthClassifierUP:
         #    done+=1
         #    if done%500==0:print "Processed "+str(done)+" terms"
 
-        #print "Test: event = ",width_map["event"]
+        #print "Test: grandfather = ",width_map["grandfather"]
 
         tags=[]
         for p in pairs:
@@ -205,10 +205,10 @@ class BaselineEntailmentClassifier(EntailmentClassifier):
         term_map = {terms[i]:term_vectors[i] for i in range(len(terms))}
         self.memory_usage("Memory usage after vectorizer():")
 
-       # p = pairs[1]
-       # print p
-       # print p[0],term_map[p[0]].getnnz() #this has all features (other than FILTERED) included in count - essentially counts keys
-       # print p[1],term_map[p[1]].getnnz()
+        #p = pairs[1]
+        #print p
+        #print p[0],term_map[p[0]].getnnz() #this has all features (other than FILTERED) included in count - essentially counts keys
+        #print p[1],term_map[p[1]].getnnz()
 
         return term_map
 

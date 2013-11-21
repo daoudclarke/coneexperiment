@@ -29,8 +29,9 @@ def get_features(line):
 def get_dependencies(line):
     features = get_features(line)
     features = {x[0]:x[1] for x in features.iteritems()
-                if not x[0].startswith('T:')
-                and not x[0].startswith('__')}
+                if not x[0].startswith('__')
+                #and not x[0].startswith('T:')
+                }
     return features
     
 class TermPosDB(object):
