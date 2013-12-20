@@ -82,33 +82,25 @@ class SimCalculator(object):
         b_nonzero_sorted = nonzero_sorted_indices(bvector)
         rank = dict(zip(b_nonzero_sorted,
                         range(1, len(b_nonzero_sorted) + 1)))
-        print "Ranks:", rank
         partial_vector = lil_matrix(avector.shape)
         precision_sum = 0.0
         for i in a_nonzero_sorted:
             partial_vector[0,i] = 1
             precision = self._compute_pre(partial_vector, bvector)
-            print "Precision", precision
             try:
-                print "Rank", rank[i]
                 rel = 1 - rank[i]/float(len(b_nonzero_sorted)+1)
             except KeyError:
                 rel = 0.0
-            print "Rel:", rel
             precision_sum += rel*precision
-        print "Precision sum: ", precision_sum
         return precision_sum/len(b_nonzero_sorted)
 
 def nonzero_sorted_indices(matrix):
     _, a_nonzero = matrix.nonzero()
     a_nonzero = set(a_nonzero)
-    print "Nonzero", a_nonzero
     a_array = np.asarray(matrix.todense())[0]
     a_sorted_indices = np.argsort(a_array)[::-1]
-    print "Sorted", a_sorted_indices
     a_nonzero_sorted = [x for x in a_sorted_indices
                         if x in a_nonzero]
-    print "Nonzero sorted", a_nonzero_sorted
     return a_nonzero_sorted
 
 if __name__=="__main__":
