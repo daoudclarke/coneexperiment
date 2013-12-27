@@ -19,6 +19,8 @@ class SimCalculator(object):
 
 
     def _compute_cosine(self, avector, bvector):
+        avector_length = math.pow(avector.multiply(avector).sum(),0.5)
+        bvector_length = math.pow(bvector.multiply(bvector).sum(),0.5)
         dotprod = avector.multiply(bvector).sum()
         denom=avector_length*bvector_length
         if denom==0:
@@ -45,12 +47,12 @@ class SimCalculator(object):
 
     def _compute_CRdiff(self, avector, bvector):
         pre = self._compute_pre(avector, bvector, False)
-        rec = self._compute_pre(bvector, avector, term_map, False)
+        rec = self._compute_pre(bvector, avector, False)
         return pre-rec
 
     def _compute_clarkediff(self, avector, bvector):
         pre = self._compute_pre(avector, bvector, True)
-        rec = self._compute_pre(bvector, avector, term_map, True)
+        rec = self._compute_pre(bvector, avector, True)
         return pre-rec
 
     def _compute_pre(self, avector, bvector, clarke=False):
