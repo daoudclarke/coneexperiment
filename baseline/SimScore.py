@@ -77,7 +77,7 @@ class SimCalculator(object):
 
             return 0
 
-    def _compute_balAPinc(self, avector, bvector):        
+    def _compute_APinc(self, avector, bvector):        
         a_nonzero_sorted = nonzero_sorted_indices(avector)
         b_nonzero_sorted = nonzero_sorted_indices(bvector)
         rank = dict(zip(b_nonzero_sorted,
@@ -93,6 +93,11 @@ class SimCalculator(object):
                 rel = 0.0
             precision_sum += rel*precision
         return precision_sum/len(b_nonzero_sorted)
+
+    def _compute_balAPinc(self, avector, bvector):
+        lin = self._compute_lin(avector, bvector)
+        ap_inc = self._compute_APinc(avector, bvector)
+        return math.sqrt(lin*ap_inc)
 
 def nonzero_sorted_indices(matrix):
     _, a_nonzero = matrix.nonzero()
