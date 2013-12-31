@@ -60,7 +60,7 @@ def evaluate(experiment):
     for name, (value, error) in summary:
         row.append( (name,value) )
         row.append( (name + " error", error) )
-    print row
+    #print row
     return row
 
 
@@ -131,7 +131,7 @@ if __name__ == "__main__":
     else:
         path = sys.argv[1]
         rows = evaluate_all(path)
-        #print rows
+        print rows
         name=sys.argv[1].split('/')[-1]
         outfile ='analysis/'+name+'.csv'
         write_summary(rows, outfile)
