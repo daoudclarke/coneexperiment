@@ -128,6 +128,7 @@ class ClassifierUP():
         self.make_name()
         self.param=0
         self.simCalc=SimCalculator()
+        self.reverse=False
 
     def make_name(self):
         self.name=self.metric+"_UP"
@@ -144,6 +145,8 @@ class ClassifierUP():
         tags=[]
         for pair in pairs:
             wd = self.simCalc.compute_score(pair,term_map,self.metric)
+            if self.reverse:
+                wd=-wd
             if wd > self.param:
                 tags.append(1)
             else:
@@ -165,7 +168,20 @@ class ClassifierP(ClassifierUP):
                 ones.append(score)
             else:
                 zeros.append(score)
-        self.param=float(Separator.separate(ones,zeros,integer=False))
+
+        (p1,e1)=Separator.separate(ones,zeros,integer=False)
+        (p2,e2)=Separator.separate(zeros,ones,integer=False)
+        e2=-1 # false test of reverse
+
+        if e2<e1:
+            self.param=-float(p2)
+            self.reverse=True
+            print "Reversing ones and zeros"
+        else:
+            self.param=float(p1)
+            self.reverse=False
+
+#        self.param=float(Separator.separate(ones,zeros,integer=False))
         logging.info("Baseline: "+self.name+", Parameter set as "+str(self.param))
 
 

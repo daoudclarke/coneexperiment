@@ -53,4 +53,12 @@ def separate(positives,negatives,trials=1000,integer=True):
         res_idx=len(reslist)/2
         res=reslist[res_idx]
     #print res, bestwrong
-    return res
+    return (res,bestwrong)
+
+
+if __name__=="__main__":
+
+    testpos=[0.5,0.6,0.9,0.7]
+    testneg=[0.3,0.2,0.1]
+
+    print separate(testpos,testneg,trials=10,integer=False)

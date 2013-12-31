@@ -65,6 +65,7 @@ class EntailmentExperimentHeldOut(EntailmentExperiment):
         time = datetime.now() - start
         results = self.classifier.predict(test)
 
+
         test_target = [x[2] for x in test]
         confusion = confusion_matrix(test_target, results)
 
