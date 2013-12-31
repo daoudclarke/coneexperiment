@@ -134,7 +134,7 @@ def run_and_evaluate(**suite_params):
     try:
         type = eval(suite.cfgparser.get('DEFAULT', 'type'))
     except:
-        logging.info("Warning: type of experiment not sepcified.  Assuming cross-validation.")
+        logging.info("Warning: type of experiment not specified.  Assuming cross-validation.")
         type="cv"
     if type=="heldout":
         suite = EntailmentSuiteHeldOut(**suite_params)

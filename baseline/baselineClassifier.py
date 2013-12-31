@@ -43,6 +43,9 @@ class WidthClassifierUP:
 
         return np.array(tags,dtype=int)
 
+    def get_params(self):
+        return str(self.param)
+
 class WidthClassifierP(WidthClassifierUP):
 
     def fit(self,pairs,term_map,target):
@@ -122,6 +125,9 @@ class SingleWidthClassifierP:
 
         return np.array(tags,dtype=int)
 
+    def get_params(self):
+        return str(self.param)
+
 class ClassifierUP():
     def __init__(self,name):
         self.metric=name
@@ -154,6 +160,9 @@ class ClassifierUP():
                 tags.append(0)
 
         return np.array(tags,dtype=int)
+
+    def get_params(self):
+        return str(self.param)
 
 class ClassifierP(ClassifierUP):
 
@@ -196,6 +205,7 @@ class BaselineEntailmentClassifier(EntailmentClassifier):
         target = np.array([p[2] for p in pairs], dtype=int)
         logging.info("Number of samples: %d", target.shape[0])
         self.classifier.fit(pairs,data, target)
+        self.param=self.classifier.get_params() #bring internal parameter setting up a level for collection and analysis
 
     def predict(self, pairs):
         "Predict whether entailment holds for a sequence of (word1, word2) tuples."
