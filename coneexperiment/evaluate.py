@@ -60,7 +60,7 @@ def evaluate(experiment):
     for name, (value, error) in summary:
         row.append( (name,value) )
         row.append( (name + " error", error) )
-        
+    print row
     return row
 
 
@@ -85,7 +85,7 @@ def evaluate_all(path):
                 #print "Warning: not directory",joined
                 continue
         except MissingDataException:
-            #print "Warning: MissingDataException"
+            print "Warning: MissingDataException"
             continue
     return rows
 
@@ -116,7 +116,7 @@ def evaluate_dimensions(path):
                 write_summary(rows, 'analysis/' + params['dataset'] + '_dims.csv')
 
         except MissingDataException:
-
+            print "Warning: ignoring due to missing data"
             continue
 
 
