@@ -19,7 +19,7 @@ def get_mean_and_error(datasets, function):
     try:
         return np.mean(data), np.std(data)/math.sqrt(len(data))
     except:
-        return data
+        return data,''
     #print experiment
 def collect_results(experiment):
     suite = PyExperimentSuite()
