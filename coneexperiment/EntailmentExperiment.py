@@ -33,7 +33,7 @@ class EntailmentExperiment(object):
         test_target = [x[2] for x in test]
         confusion = confusion_matrix(test_target, results)
         
-        return confusion, time, 'Kfold test', results, test_target
+        return confusion, time, 'Kfold test', self.classifier.param, results, test_target
 
 class EntailmentExperimentHeldOut(EntailmentExperiment):
 

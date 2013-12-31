@@ -13,7 +13,7 @@ class WidthClassifierUP:
 
     def __init__(self,name):
         self.name=name
-        self.widthparameter=0
+        self.param=0
 
 
     def fit(self,pairs, data,target):
@@ -36,7 +36,7 @@ class WidthClassifierUP:
         tags=[]
         for p in pairs:
             wd = width_map[p[1]]-width_map[p[0]]
-            if wd > self.widthparameter:
+            if wd > self.param:
                 tags.append(1)
             else:
                 tags.append(0)
@@ -65,13 +65,13 @@ class WidthClassifierP(WidthClassifierUP):
                 zeros.append(wd)
 #        print len(ones), len(zeros)
 
-        self.widthparameter=float(Separator.separate(ones,zeros))
+        self.param=float(Separator.separate(ones,zeros))
         logging.info("Baseline: "+self.name+", Parameter set as "+str(self.widthparameter))
 
 class SingleWidthClassifierP:
     def __init__(self,name):
         self.name=name
-        self.widthparameter=0
+        self.param=0
 
     def fit(self,pairs,term_map,target):
 
@@ -93,8 +93,8 @@ class SingleWidthClassifierP:
                 zeros.append(wd)
             #        print len(ones), len(zeros)
 
-        self.widthparameter=float(Separator.separate(ones,zeros))
-        logging.info("Baseline: "+self.name+", Parameter set as "+str(self.widthparameter))
+        self.param=float(Separator.separate(ones,zeros))
+        logging.info("Baseline: "+self.name+", Parameter set as "+str(self.param))
 
 
 
@@ -102,7 +102,7 @@ class SingleWidthClassifierP:
         #term_map is dictionary from terms (in pairs) to vectors
         #print "Baseline prediction: "+self.name
         #print "Generating width_map from "+str(len(term_map.keys()))+" keys"
-        print "Width parameter selected is "+str(self.widthparameter)
+        print "Width parameter selected is "+str(self.param)
         width_map={}
         #done=0
         for term in term_map.keys():
@@ -115,7 +115,7 @@ class SingleWidthClassifierP:
         tags=[]
         for p in pairs:
             wd = width_map[p[1]]
-            if wd > self.widthparameter:
+            if wd > self.param:
                 tags.append(1)
             else:
                 tags.append(0)
