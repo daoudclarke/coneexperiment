@@ -72,7 +72,7 @@ class EntailmentSuite(PyExperimentSuite):
     def iterate(self, params, rep, n):
         logging.info("Beginning iteration %d, repetition %d", n, rep)
         assert n == 0
-        confusion, time, info, params, predictions, target = self.experiment.runFold(rep)
+        confusion, time, info, classparams, predictions, target = self.experiment.runFold(rep)
         
         return {'rep':rep,
                 'iter':n,
@@ -80,7 +80,7 @@ class EntailmentSuite(PyExperimentSuite):
                 'time':time.total_seconds(),
                 'classifier':params['classifier'],
                 'info': info,
-                'params': params,
+                'params': classparams,
                 'predictions': predictions,
                 'target': target}
 
