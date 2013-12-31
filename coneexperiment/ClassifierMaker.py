@@ -113,3 +113,7 @@ class ClassifierMaker(object):
     def _make_invCLP(self):
         classifier = ClassifierP('invCL')
         return BaselineEntailmentClassifier(classifier,self.vectors)
+
+    def _make_balAPinc(self):
+        classifier = ClassifierP('balAPinc')
+        return BaselineEntailmentClassifier(classifier,self.vectors)
