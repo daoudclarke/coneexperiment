@@ -16,8 +16,10 @@ class MissingDataException(Exception):
 
 def get_mean_and_error(datasets, function):
     data = [function(x) for x in datasets]
-    return np.mean(data), np.std(data)/math.sqrt(len(data))
-
+    try:
+        return np.mean(data), np.std(data)/math.sqrt(len(data))
+    except:
+        return data
     #print experiment
 def collect_results(experiment):
     suite = PyExperimentSuite()
@@ -41,7 +43,9 @@ def evaluate(experiment):
         ('Precision', lambda x: precision(x['confusion'][0])),
         ('Recall', lambda x: recall(x['confusion'][0])),
         ('F1', lambda x: f1_score(x['confusion'][0])),
-        ('Time', lambda x: x['time'][0])]
+        ('Time', lambda x: x['time'][0]),
+        ('ClassParams', lambda x: x['params'][0])]
+
 
     # summary = {}
     # for name, eval_func in evaluations:
