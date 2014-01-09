@@ -82,6 +82,8 @@ class SimCalculator(object):
     def _compute_APinc(self, avector, bvector):        
         a_nonzero_sorted = nonzero_sorted_indices(avector)
         b_nonzero_sorted = nonzero_sorted_indices(bvector)
+        if len(b_nonzero_sorted) == 0:
+            return 0.0
         rank = dict(zip(b_nonzero_sorted,
                         range(1, len(b_nonzero_sorted) + 1)))
         partial = set()
