@@ -16,8 +16,10 @@ class MissingDataException(Exception):
 
 def get_mean_and_error(datasets, function):
     data = [function(x) for x in datasets]
-    return np.mean(data), np.std(data)/math.sqrt(len(data))
-
+    try:
+        return np.mean(data), np.std(data)/math.sqrt(len(data))
+    except:
+        return data,''
     #print experiment
 def collect_results(experiment):
     suite = PyExperimentSuite()
@@ -41,7 +43,9 @@ def evaluate(experiment):
         ('Precision', lambda x: precision(x['confusion'][0])),
         ('Recall', lambda x: recall(x['confusion'][0])),
         ('F1', lambda x: f1_score(x['confusion'][0])),
-        ('Time', lambda x: x['time'][0])]
+        ('Time', lambda x: x['time'][0]),
+        ('ClassParams', lambda x: x['params'][0])]
+
 
     # summary = {}
     # for name, eval_func in evaluations:
@@ -56,7 +60,7 @@ def evaluate(experiment):
     for name, (value, error) in summary:
         row.append( (name,value) )
         row.append( (name + " error", error) )
-        
+    #print row
     return row
 
 
@@ -81,7 +85,7 @@ def evaluate_all(path):
                 #print "Warning: not directory",joined
                 continue
         except MissingDataException:
-            #print "Warning: MissingDataException"
+            print "Warning: MissingDataException"
             continue
     return rows
 
@@ -112,7 +116,7 @@ def evaluate_dimensions(path):
                 write_summary(rows, 'analysis/' + params['dataset'] + '_dims.csv')
 
         except MissingDataException:
-
+            print "Warning: ignoring due to missing data"
             continue
 
 
@@ -127,7 +131,7 @@ if __name__ == "__main__":
     else:
         path = sys.argv[1]
         rows = evaluate_all(path)
-        #print rows
+        print rows
         name=sys.argv[1].split('/')[-1]
         outfile ='analysis/'+name+'.csv'
         write_summary(rows, outfile)

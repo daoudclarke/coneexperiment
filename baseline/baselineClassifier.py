@@ -13,7 +13,7 @@ class WidthClassifierUP:
 
     def __init__(self,name):
         self.name=name
-        self.widthparameter=0
+        self.param=0
 
 
     def fit(self,pairs, data,target):
@@ -36,12 +36,15 @@ class WidthClassifierUP:
         tags=[]
         for p in pairs:
             wd = width_map[p[1]]-width_map[p[0]]
-            if wd > self.widthparameter:
+            if wd > self.param:
                 tags.append(1)
             else:
                 tags.append(0)
 
         return np.array(tags,dtype=int)
+
+    def get_params(self):
+        return str(self.param)
 
 class WidthClassifierP(WidthClassifierUP):
 
@@ -65,13 +68,13 @@ class WidthClassifierP(WidthClassifierUP):
                 zeros.append(wd)
 #        print len(ones), len(zeros)
 
-        self.widthparameter=float(Separator.separate(ones,zeros)[0])
+        self.param=float(Separator.separate(ones,zeros))
         logging.info("Baseline: "+self.name+", Parameter set as "+str(self.widthparameter))
 
 class SingleWidthClassifierP:
     def __init__(self,name):
         self.name=name
-        self.widthparameter=0
+        self.param=0
 
     def fit(self,pairs,term_map,target):
 
@@ -93,8 +96,8 @@ class SingleWidthClassifierP:
                 zeros.append(wd)
             #        print len(ones), len(zeros)
 
-        self.widthparameter=float(Separator.separate(ones,zeros)[0])
-        logging.info("Baseline: "+self.name+", Parameter set as "+str(self.widthparameter))
+        self.param=float(Separator.separate(ones,zeros))
+        logging.info("Baseline: "+self.name+", Parameter set as "+str(self.param))
 
 
 
@@ -102,7 +105,7 @@ class SingleWidthClassifierP:
         #term_map is dictionary from terms (in pairs) to vectors
         #print "Baseline prediction: "+self.name
         #print "Generating width_map from "+str(len(term_map.keys()))+" keys"
-        print "Width parameter selected is "+str(self.widthparameter)
+        print "Width parameter selected is "+str(self.param)
         width_map={}
         #done=0
         for term in term_map.keys():
@@ -115,20 +118,24 @@ class SingleWidthClassifierP:
         tags=[]
         for p in pairs:
             wd = width_map[p[1]]
-            if wd > self.widthparameter:
+            if wd > self.param:
                 tags.append(1)
             else:
                 tags.append(0)
 
         return np.array(tags,dtype=int)
 
+    def get_params(self):
+        return str(self.param)
+
 class ClassifierUP():
     def __init__(self,name):
         self.metric=name
         self.make_name()
-        self.param=0
+        #self.param=0
         self.simCalc=SimCalculator()
-        self.reverse=False
+        #self.reverse=False
+        self.param=(0,False) #flag for negating values to swap direction of inequality - false is >, true is <
 
     def make_name(self):
         self.name=self.metric+"_UP"
@@ -145,14 +152,17 @@ class ClassifierUP():
         tags=[]
         for pair in pairs:
             wd = self.simCalc.compute_score(pair,term_map,self.metric)
-            if self.reverse:
+            if self.param[1]:
                 wd=-wd
-            if wd > self.param:
+            if wd > self.param[0]:
                 tags.append(1)
             else:
                 tags.append(0)
 
         return np.array(tags,dtype=int)
+
+    def get_params(self):
+        return str(self.param)
 
 class ClassifierP(ClassifierUP):
 
@@ -171,15 +181,13 @@ class ClassifierP(ClassifierUP):
 
         (p1,e1)=Separator.separate(ones,zeros,integer=False)
         (p2,e2)=Separator.separate(zeros,ones,integer=False)
-        e2=-1 # false test of reverse
+        #e2=-1 # force test of reverse
 
         if e2<e1:
-            self.param=-float(p2)
-            self.reverse=True
+            self.param=(-float(p2),True)
             print "Reversing ones and zeros"
         else:
-            self.param=float(p1)
-            self.reverse=False
+            self.param=(float(p1),False)
 
 #        self.param=float(Separator.separate(ones,zeros,integer=False))
         logging.info("Baseline: "+self.name+", Parameter set as "+str(self.param))
@@ -197,6 +205,7 @@ class BaselineEntailmentClassifier(EntailmentClassifier):
         target = np.array([p[2] for p in pairs], dtype=int)
         logging.info("Number of samples: %d", target.shape[0])
         self.classifier.fit(pairs,data, target)
+        self.param=self.classifier.get_params() #bring internal parameter setting up a level for collection and analysis
 
     def predict(self, pairs):
         "Predict whether entailment holds for a sequence of (word1, word2) tuples."

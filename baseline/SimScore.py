@@ -82,13 +82,16 @@ class SimCalculator(object):
     def _compute_APinc(self, avector, bvector):        
         a_nonzero_sorted = nonzero_sorted_indices(avector)
         b_nonzero_sorted = nonzero_sorted_indices(bvector)
+        if len(b_nonzero_sorted) == 0:
+            return 0.0
         rank = dict(zip(b_nonzero_sorted,
                         range(1, len(b_nonzero_sorted) + 1)))
-        partial_vector = lil_matrix(avector.shape)
+        partial = set()
+        b_nonzero = set(b_nonzero_sorted)
         precision_sum = 0.0
         for i in a_nonzero_sorted:
-            partial_vector[0,i] = 1
-            precision = self._compute_pre(partial_vector, bvector)
+            partial.add(i)
+            precision = len(partial & b_nonzero)/float(len(partial))
             try:
                 rel = 1 - rank[i]/float(len(b_nonzero_sorted)+1)
             except KeyError:

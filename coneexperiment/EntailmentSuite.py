@@ -72,7 +72,7 @@ class EntailmentSuite(PyExperimentSuite):
     def iterate(self, params, rep, n):
         logging.info("Beginning iteration %d, repetition %d", n, rep)
         assert n == 0
-        confusion, time, info, predictions, target = self.experiment.runFold(rep)
+        confusion, time, info, classparams, predictions, target = self.experiment.runFold(rep)
         
         return {'rep':rep,
                 'iter':n,
@@ -80,6 +80,7 @@ class EntailmentSuite(PyExperimentSuite):
                 'time':time.total_seconds(),
                 'classifier':params['classifier'],
                 'info': info,
+                'params': classparams,
                 'predictions': predictions,
                 'target': target}
 
@@ -133,7 +134,7 @@ def run_and_evaluate(**suite_params):
     try:
         type = eval(suite.cfgparser.get('DEFAULT', 'type'))
     except:
-        logging.info("Warning: type of experiment not sepcified.  Assuming cross-validation.")
+        logging.info("Warning: type of experiment not specified.  Assuming cross-validation.")
         type="cv"
     if type=="heldout":
         suite = EntailmentSuiteHeldOut(**suite_params)
@@ -156,7 +157,7 @@ def run_and_evaluate(**suite_params):
 
 if __name__ == '__main__':
     logging.basicConfig(filename='log/experiments.log',
-                        level=logging.DEBUG,
+                        level=logging.INFO,#can be DEBUG,INFO,WARNING,ERROR or CRITICAL
                         format='%(asctime)s %(process)d %(levelname)s %(message)s')
     logging.captureWarnings(True)
 

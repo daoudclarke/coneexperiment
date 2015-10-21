@@ -17,6 +17,7 @@ class EntailmentClassifier:
         self.classifier = classifier
         self.vectorizer = None
         self.output_memory_usage = False
+        self.param="None recorded" # default parameter message
 
     def memory_usage(self, message):
         if self.output_memory_usage:
@@ -35,6 +36,7 @@ class EntailmentClassifier:
         assert data.shape[0] == target.shape[0]
         logging.info("Number of samples: %d", data.shape[0])
         self.classifier.fit(data, target)
+        self.param= self.classifier.get_params()
 
     def predict(self, pairs):
         "Predict whether entailment holds for a sequence of (word1, word2) tuples."        

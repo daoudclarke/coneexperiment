@@ -61,4 +61,4 @@ if __name__=="__main__":
     testpos=[0.5,0.6,0.9,0.7]
     testneg=[0.3,0.2,0.1]
 
-    print separate(testpos,testneg,trials=10,integer=False)
+    print separate(testneg,testpos,trials=10,integer=False)
